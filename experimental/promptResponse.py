@@ -1,5 +1,4 @@
 from typing import List
-
 import sys, os, json
 import experimentalGpt
 
@@ -9,9 +8,7 @@ sys.path.append(parent_dir)
 
 import gpt
 
-
-
-# only to make the prompt more readable 
+# Only to make the prompt more readable
 def initialOutlinePrompt() -> str: 
     return """I am giving you a topic. 
     
@@ -39,7 +36,6 @@ def initialOutlinePrompt() -> str:
         ]
     }
     """
-
 
 def oneStepEnrichmentPrompt() -> str:
     return """
@@ -85,7 +81,6 @@ def oneStepEnrichmentPrompt() -> str:
     - Maintain a structured and informative tone.  
     """
 
-
 def perSlideEnrichmentPrompt() -> str:
     return """
     You are an expert assistant that enhances PowerPoint slides by expanding on key points while keeping the content structured and concise.
@@ -119,21 +114,80 @@ def perSlideEnrichmentPrompt() -> str:
     - Maintain a structured and informative tone.  
     """
 
+def generate_speech_prompt() -> str:
+    return """
+    You are an expert speech writer who creates TTS-optimized speech scripts.
+    
+    Your task is to transform the provided content into a speech script specifically formatted for text-to-speech (TTS) systems.
+    
+    STRICT FORMAT REQUIREMENTS (you must follow these exactly):
+    
+    1. Start with the exact greeting: "Hello everyone. Today, I will be presenting about [TOPIC]. In this presentation, I will cover [LIST 3-5 KEY SECTIONS]."
+    
+    2. For each section or slide, begin with: "Let's discuss [SECTION TITLE]." followed by the content in natural conversational language.
+    
+    3. Between sections, add the transition: "[PAUSE=1] Moving on to our next topic. [SLIDE CHANGE]"
+    
+    4. Include precise pause indicators: "[PAUSE=1]" for 1-second pauses, "[PAUSE=2]" for 2-second pauses.
+    
+    5. End with exactly: "Thank you for your attention. [PAUSE=1] If you have any questions, I'd be happy to address them now. [PAUSE=2]"
+    
+    IMPORTANT LANGUAGE GUIDELINES:
+    - Use simple, clear sentences that work well for TTS
+    - Avoid complex words or terms that might be mispronounced
+    - Break down complex concepts into shorter, digestible statements
+    - Use natural transitions between ideas
+    
+    The final output should read as a continuous speech that a TTS system could read without awkward phrasing or unclear structure.
+    """
 
+# Convert outline to TTS-ready speech script
+def outline_to_speech(enriched_outline: dict) -> str:
+    """
+    Convert an enriched presentation outline to a TTS-ready speech script.
+    
+    Args:
+        enriched_outline (dict): The enriched outline in JSON format
+        
+    Returns:
+        str: A formatted speech script optimized for TTS systems
+    """
+    # Convert dictionary to JSON string if needed
+    if isinstance(enriched_outline, dict):
+        outline_json = json.dumps(enriched_outline)
+    else:
+        outline_json = enriched_outline
+    
+    # Generate the speech script using LLM
+    speech_text = experimentalGpt.gpt_summarise(system=generate_speech_prompt(), text=outline_json)
+    
+    return speech_text
 
-# enrichh the entire outline, and generate the content of each slide with more content and details
-# hard to output consistent JSON structure
+# Save speech script to file
+def save_speech_to_file(speech_text: str, filename: str = "presentation_speech.md"):
+    """
+    Save the generated TTS-ready speech script to a markdown file.
+    
+    Args:
+        speech_text (str): The speech content
+        filename (str): The filename to save to (default: presentation_speech.md)
+    """
+    with open(filename, "w", encoding="utf-8") as f:
+        f.write(speech_text)
+    print(f"TTS-ready speech script saved to {filename}")
+
+# Enrich the entire outline in one step
 def oneStepEnrich(outline: str) -> str:
     return experimentalGpt.gpt_summarise(system=oneStepEnrichmentPrompt(), text=outline)
 
-# enrich the outline slide by slide, and generate the content of each slide with more content and details
+# Enrich content slide by slide
 def perSlideEnrich(topic: str, outline: str) -> dict:
     outline = json.loads(outline)
     for i, slide in enumerate(outline['slides']):
-        # temporarily remove visuals for less confusing prompt
+        # Temporarily remove visuals to reduce confusion in the prompt
         visual = slide.pop('visuals', None)
 
-        enrichedSlide = experimentalGpt.gpt_summarise(system=perSlideEnrichmentPrompt(), text=f"topic: {topic}\n\n" +json.dumps(slide))
+        enrichedSlide = experimentalGpt.gpt_summarise(system=perSlideEnrichmentPrompt(), text=f"topic: {topic}\n\n" + json.dumps(slide))
         print(enrichedSlide)
         enrichedSlide = json.loads(enrichedSlide)
         if visual:
@@ -141,28 +195,36 @@ def perSlideEnrich(topic: str, outline: str) -> dict:
         outline['slides'][i] = enrichedSlide
     return outline
 
-
-
-
-
 def process(topic: str):
+    # Generate initial outline
     outlineText = experimentalGpt.gpt_summarise(system=initialOutlinePrompt(), text=topic)
-    print(outlineText)
+    print("Initial outline generated.")
     
-    # # # perSlideEnrich
+    # Enrich content slide by slide
     enrichedOutline = perSlideEnrich(topic, outlineText)
-    print(enrichedOutline)
+    print("Outline enriched slide by slide.")
     
-
-    # # oneStepEnrich
-    # enrichedResultText = oneStepEnrich(outlineText)
-    # print(enrichedResultText)
-    # enrichedParsedResult = json.loads(enrichedResultText)
-
-
-    return
-
+    # Convert enriched outline to TTS-ready speech script
+    speech_text = outline_to_speech(enrichedOutline)
+    print("TTS-ready speech script generated.")
     
+    # Save speech script to file
+    save_speech_to_file(speech_text)
+    
+    # Return the enriched outline and generated speech script
+    return {
+        "enriched_outline": enrichedOutline,
+        "speech_text": speech_text
+    }
 
+if __name__ == "__main__":
+    import json
 
-process('The future of Artificial Intelligence with the introduction of quantum computing')
+    # 读取 JSON 文件
+    with open("./outline.json", "r", encoding="utf-8") as f:
+        json_data = json.load(f)
+
+    # 假设 outline_to_speech 需要传入 JSON 数据
+    speech_text = outline_to_speech(json_data)
+    save_speech_to_file(speech_text)
+    print("TTS-ready speech script generated.")
