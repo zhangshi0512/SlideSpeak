@@ -40,7 +40,7 @@ def initialOutlinePrompt() -> str:
     }
     """
 
-
+# need somehow make model align with the output format 
 def oneStepEnrichmentPrompt() -> str:
     return """
     You are an expert assistant that enhances PowerPoint slides by expanding on key points while keeping the content structured, clear, and concise.
@@ -165,4 +165,4 @@ def process(topic: str):
     
 
 
-process('The future of Artificial Intelligence with the introduction of quantum computing')
+process('Coca-Cola\'s use of Cloud Computing')
