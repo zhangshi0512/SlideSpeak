@@ -1,6 +1,12 @@
 import pdf2final_list
-import text2ppt
+import dictToPpt
+import text2audio
 
-x = pdf2final_list.process(
-    ["Logistic Regression"])
-text2ppt.presentate(x)
+result = pdf2final_list.process("Coca-Cola's use of Cloud Computing")
+
+enriched_outline = result["enriched_outline"]
+text = result["speech_text"]
+
+dictToPpt.dictToPpt(enriched_outline)
+print("*"*18)
+text2audio.text_to_speech(text)
