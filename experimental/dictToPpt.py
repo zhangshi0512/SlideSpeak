@@ -219,36 +219,75 @@ def dictToPpt(inputDict: dict):
     # Add title slide
     addTitlePage(prs, inputDict["title"])
 
+    # Add content slides
+    for slide in inputDict["slides"]:
+        addContentSlide(prs, slide)
+    
 
     prs.save('PPT.pptx')
 
 
 
 
-### Helper method to add a title slide to the presentation
+### Helper method to add a title slide to the presentation, aka the first slide
+### Take in the presentation object and the title: str of the presentation
 def addTitlePage(prs: Presentation, title: str):
-    ### Take in the presentation object and the title: str of the presentation
-    # Presentation.slide_layouts[0] has the following layout:
-    # Lyout 0:
+    # Presentation.slide_layouts[0] has the following layout (by default):
     #   - Placeholder 0: Title 1
     #   - Placeholder 1: Subtitle 2
-    #   - Placeholder 10: Date Placeholder 3
-    #   - Placeholder 11: Footer Placeholder 4
-    #   - Placeholder 12: Slide Number Placeholder 5
-    titleSlideLayout = prs.slide_layouts[0]
-    slide = prs.slides.add_slide(titleSlideLayout)
-
+    slide = prs.slides.add_slide(prs.slide_layouts[0])
     slide.shapes.title.text = title.strip()
     slide.placeholders[1].text = "Subtitle Placeholder"
-    
+    setTitlePageStyle(slide)
 
+## Helper method to set the style for the title slide, aka the first slide
 def setTitlePageStyle(slide: Slide):
     if slide.shapes.title:
         title_shape = slide.shapes.title
         font = title_shape.text_frame.paragraphs[0].font
         font.size = Pt(44)
         font.bold = True
-        font.italic = True
+
+
+# Helper method, Add content of slide object inside slides from the inputDictp
+# The input slideDict should shape like this:
+# {
+#   "title": str,
+#   "content":[
+#      {
+#        "bulletPoint": str,
+#        "details": [str, str, ...]
+#      }, ... 
+#   ]
+# } 
+def addContentSlide(prs: Presentation, slideDict: dict):
+    # Presentation.slide_layouts[0] has the following layout (by default):
+    #   - Placeholder 0: Title 1
+    #   - Placeholder 1: Content Placeholder 2
+    #   - Placeholder 10: Date Placeholder 3
+    #   - Placeholder 11: Footer Placeholder 4
+    #   - Placeholder 12: Slide Number Placeholder 5
+    slide = prs.slides.add_slide(prs.slide_layouts[1])
+    slide.shapes.title.text = slideDict["title"].strip()
+    
+    contentTextFrame = slide.placeholders[1].text_frame
+    contentTextFrame.clear()
+
+    if len(contentTextFrame.paragraphs) > 0:
+        contentTextFrame.paragraphs[0]._element.getparent().remove(contentTextFrame.paragraphs[0]._element)
+
+    for content in slideDict["content"]:
+        p = contentTextFrame.add_paragraph()
+        p.text = content["bulletPoint"]
+        p.space_after = Pt(5)
+        p.level = 0
+
+        for detail in content["details"]:
+            p = contentTextFrame.add_paragraph()
+            p.text = detail
+            p.space_after = Pt(3)
+            p.level = 1
+
 
 dictToPpt(testDict)
 
