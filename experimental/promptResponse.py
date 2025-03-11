@@ -38,6 +38,7 @@ def initialOutlinePrompt() -> str:
     }
     """
 
+# need somehow make model align with the output format 
 def oneStepEnrichmentPrompt() -> str:
     return """
     You are an expert assistant that enhances PowerPoint slides by expanding on key points while keeping the content structured, clear, and concise.
@@ -164,11 +165,11 @@ if __name__ == "__main__":
     # Default: Use chunked processing for smaller LLMs
     result = process(topic)
     
-    # Preview the result
-    print("\nSpeech preview (first 300 characters):")
-    print("-" * 50)
-    print(result["speech_text"][:300] + "..." if len(result["speech_text"]) > 300 else result["speech_text"])
-    print("-" * 50)
+    # # Preview the result
+    # print("\nSpeech preview (first 300 characters):")
+    # print("-" * 50)
+    # print(result["speech_text"][:300] + "..." if len(result["speech_text"]) > 300 else result["speech_text"])
+    # print("-" * 50)
     
     # To use the direct processing method for larger LLMs, you would call:
     # result = process(topic, use_chunking=False)
