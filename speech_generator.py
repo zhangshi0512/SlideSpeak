@@ -9,7 +9,7 @@ import re
 from typing import Dict, List, Union, Any
 
 # Import the GPT module for text generation
-from experimentalGpt import gpt_summarise
+from gpt import gpt_summarise
 
 
 def generate_speech_introduction_prompt() -> str:
