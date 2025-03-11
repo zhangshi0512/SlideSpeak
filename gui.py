@@ -18,9 +18,9 @@ def exec(*args):
             l1=[_.strip() for _ in intext.split(",")]
         else:
             l1=[intext]
-        print(l1)
+        print("l1: ", l1)
         x=pdf2final_list.process(l1)
-        print("\n\n", x)
+        print("\n\noutput from pdf2final_list", x)
         text2ppt.presentate(x)
         file_path = filedialog.asksaveasfilename(defaultextension='.pptx',
                                                 filetypes=[('PowerPoint files', '*.pptx'),
