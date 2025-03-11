@@ -7,8 +7,9 @@ parent_dir = os.path.dirname(cur_dir)
 sys.path.append(parent_dir)
 
 import gpt
+import speech_generator  # Import the new speech generator module
 
-# Only to make the prompt more readable
+# Only to make the prompt more readable 
 def initialOutlinePrompt() -> str: 
     return """I am giving you a topic. 
     
@@ -114,68 +115,6 @@ def perSlideEnrichmentPrompt() -> str:
     - Maintain a structured and informative tone.  
     """
 
-def generate_speech_prompt() -> str:
-    return """
-    You are an expert speech writer who creates TTS-optimized speech scripts.
-    
-    Your task is to transform the provided content into a speech script specifically formatted for text-to-speech (TTS) systems.
-    
-    STRICT FORMAT REQUIREMENTS (you must follow these exactly):
-    
-    1. Start with the exact greeting: "Hello everyone. Today, I will be presenting about [TOPIC]. In this presentation, I will cover [LIST 3-5 KEY SECTIONS]."
-    
-    2. For each section or slide, begin with: "Let's discuss [SECTION TITLE]." followed by the content in natural conversational language.
-    
-    3. Between sections, add the transition: "[PAUSE=1] Moving on to our next topic. [SLIDE CHANGE]"
-    
-    4. Include precise pause indicators: "[PAUSE=1]" for 1-second pauses, "[PAUSE=2]" for 2-second pauses.
-    
-    5. End with exactly: "Thank you for your attention. [PAUSE=1] If you have any questions, I'd be happy to address them now. [PAUSE=2]"
-    
-    IMPORTANT LANGUAGE GUIDELINES:
-    - Use simple, clear sentences that work well for TTS
-    - Avoid complex words or terms that might be mispronounced
-    - Break down complex concepts into shorter, digestible statements
-    - Use natural transitions between ideas
-    
-    The final output should read as a continuous speech that a TTS system could read without awkward phrasing or unclear structure.
-    """
-
-# Convert outline to TTS-ready speech script
-def outline_to_speech(enriched_outline: dict) -> str:
-    """
-    Convert an enriched presentation outline to a TTS-ready speech script.
-    
-    Args:
-        enriched_outline (dict): The enriched outline in JSON format
-        
-    Returns:
-        str: A formatted speech script optimized for TTS systems
-    """
-    # Convert dictionary to JSON string if needed
-    if isinstance(enriched_outline, dict):
-        outline_json = json.dumps(enriched_outline)
-    else:
-        outline_json = enriched_outline
-    
-    # Generate the speech script using LLM
-    speech_text = experimentalGpt.gpt_summarise(system=generate_speech_prompt(), text=outline_json)
-    
-    return speech_text
-
-# Save speech script to file
-def save_speech_to_file(speech_text: str, filename: str = "presentation_speech.md"):
-    """
-    Save the generated TTS-ready speech script to a markdown file.
-    
-    Args:
-        speech_text (str): The speech content
-        filename (str): The filename to save to (default: presentation_speech.md)
-    """
-    with open(filename, "w", encoding="utf-8") as f:
-        f.write(speech_text)
-    print(f"TTS-ready speech script saved to {filename}")
-
 # Enrich the entire outline in one step
 def oneStepEnrich(outline: str) -> str:
     return experimentalGpt.gpt_summarise(system=oneStepEnrichmentPrompt(), text=outline)
@@ -195,7 +134,7 @@ def perSlideEnrich(topic: str, outline: str) -> dict:
         outline['slides'][i] = enrichedSlide
     return outline
 
-def process(topic: str):
+def process(topic: str, use_chunking=True):
     # Generate initial outline
     outlineText = experimentalGpt.gpt_summarise(system=initialOutlinePrompt(), text=topic)
     print("Initial outline generated.")
@@ -204,12 +143,12 @@ def process(topic: str):
     enrichedOutline = perSlideEnrich(topic, outlineText)
     print("Outline enriched slide by slide.")
     
-    # Convert enriched outline to TTS-ready speech script
-    speech_text = outline_to_speech(enrichedOutline)
-    print("TTS-ready speech script generated.")
+    # Convert enriched outline to TTS-ready speech script using the speech_generator module
+    speech_text = speech_generator.outline_to_speech(enrichedOutline, use_chunking=use_chunking)
+    print(f"TTS-ready speech script generated using {'chunked' if use_chunking else 'direct'} processing.")
     
     # Save speech script to file
-    save_speech_to_file(speech_text)
+    speech_generator.save_speech_to_file(speech_text)
     
     # Return the enriched outline and generated speech script
     return {
@@ -218,13 +157,18 @@ def process(topic: str):
     }
 
 if __name__ == "__main__":
-    import json
-
-    # 读取 JSON 文件
-    with open("./outline.json", "r", encoding="utf-8") as f:
-        json_data = json.load(f)
-
-    # 假设 outline_to_speech 需要传入 JSON 数据
-    speech_text = outline_to_speech(json_data)
-    save_speech_to_file(speech_text)
-    print("TTS-ready speech script generated.")
+    # Simple example of processing a topic
+    topic = "Coca-Cola's use of Cloud Computing"
+    print(f"Generating presentation and speech for topic: '{topic}'")
+    
+    # Default: Use chunked processing for smaller LLMs
+    result = process(topic)
+    
+    # Preview the result
+    print("\nSpeech preview (first 300 characters):")
+    print("-" * 50)
+    print(result["speech_text"][:300] + "..." if len(result["speech_text"]) > 300 else result["speech_text"])
+    print("-" * 50)
+    
+    # To use the direct processing method for larger LLMs, you would call:
+    # result = process(topic, use_chunking=False)
