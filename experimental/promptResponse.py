@@ -1,5 +1,4 @@
 from typing import List
-
 import sys, os, json
 import experimentalGpt
 
@@ -8,10 +7,9 @@ parent_dir = os.path.dirname(cur_dir)
 sys.path.append(parent_dir)
 
 import gpt
+import speech_generator  # Import the new speech generator module
 
-
-
-# only to make the prompt more readable 
+# Only to make the prompt more readable 
 def initialOutlinePrompt() -> str: 
     return """I am giving you a topic. 
     
@@ -85,7 +83,6 @@ def oneStepEnrichmentPrompt() -> str:
     - Maintain a structured and informative tone.  
     """
 
-
 def perSlideEnrichmentPrompt() -> str:
     return """
     You are an expert assistant that enhances PowerPoint slides by expanding on key points while keeping the content structured and concise.
@@ -119,21 +116,18 @@ def perSlideEnrichmentPrompt() -> str:
     - Maintain a structured and informative tone.  
     """
 
-
-
-# enrichh the entire outline, and generate the content of each slide with more content and details
-# hard to output consistent JSON structure
+# Enrich the entire outline in one step
 def oneStepEnrich(outline: str) -> str:
     return experimentalGpt.gpt_summarise(system=oneStepEnrichmentPrompt(), text=outline)
 
-# enrich the outline slide by slide, and generate the content of each slide with more content and details
+# Enrich content slide by slide
 def perSlideEnrich(topic: str, outline: str) -> dict:
     outline = json.loads(outline)
     for i, slide in enumerate(outline['slides']):
-        # temporarily remove visuals for less confusing prompt
+        # Temporarily remove visuals to reduce confusion in the prompt
         visual = slide.pop('visuals', None)
 
-        enrichedSlide = experimentalGpt.gpt_summarise(system=perSlideEnrichmentPrompt(), text=f"topic: {topic}\n\n" +json.dumps(slide))
+        enrichedSlide = experimentalGpt.gpt_summarise(system=perSlideEnrichmentPrompt(), text=f"topic: {topic}\n\n" + json.dumps(slide))
         print(enrichedSlide)
         enrichedSlide = json.loads(enrichedSlide)
         if visual:
@@ -141,28 +135,41 @@ def perSlideEnrich(topic: str, outline: str) -> dict:
         outline['slides'][i] = enrichedSlide
     return outline
 
-
-
-
-
-def process(topic: str):
+def process(topic: str, use_chunking=True):
+    # Generate initial outline
     outlineText = experimentalGpt.gpt_summarise(system=initialOutlinePrompt(), text=topic)
-    print(outlineText)
+    print("Initial outline generated.")
     
-    # # # perSlideEnrich
+    # Enrich content slide by slide
     enrichedOutline = perSlideEnrich(topic, outlineText)
-    print(enrichedOutline)
+    print("Outline enriched slide by slide.")
     
-
-    # # oneStepEnrich
-    # enrichedResultText = oneStepEnrich(outlineText)
-    # print(enrichedResultText)
-    # enrichedParsedResult = json.loads(enrichedResultText)
-
-
-    return
-
+    # Convert enriched outline to TTS-ready speech script using the speech_generator module
+    speech_text = speech_generator.outline_to_speech(enrichedOutline, use_chunking=use_chunking)
+    print(f"TTS-ready speech script generated using {'chunked' if use_chunking else 'direct'} processing.")
     
+    # Save speech script to file
+    speech_generator.save_speech_to_file(speech_text)
+    
+    # Return the enriched outline and generated speech script
+    return {
+        "enriched_outline": enrichedOutline,
+        "speech_text": speech_text
+    }
 
-
-process('Coca-Cola\'s use of Cloud Computing')
+if __name__ == "__main__":
+    # Simple example of processing a topic
+    topic = "Coca-Cola's use of Cloud Computing"
+    print(f"Generating presentation and speech for topic: '{topic}'")
+    
+    # Default: Use chunked processing for smaller LLMs
+    result = process(topic)
+    
+    # # Preview the result
+    # print("\nSpeech preview (first 300 characters):")
+    # print("-" * 50)
+    # print(result["speech_text"][:300] + "..." if len(result["speech_text"]) > 300 else result["speech_text"])
+    # print("-" * 50)
+    
+    # To use the direct processing method for larger LLMs, you would call:
+    # result = process(topic, use_chunking=False)
