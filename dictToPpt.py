@@ -1,6 +1,9 @@
 from pptx import Presentation
 from pptx.slide import Slide
 from pptx.util import Pt
+from pptx.enum.text import PP_ALIGN, MSO_AUTO_SIZE
+import win32com.client
+import os
 
 
 ### Helper method to preview the slide layouts available in a PowerPoint presentation
@@ -33,7 +36,11 @@ testDict = {
                         "Importance of Cloud Computing:",
                         "- Cost Efficiency: By shifting IT operations to cloud providers, Coca-Cola can reduce significant upfront costs associated with hardware and infrastructure. This allows for better allocation of resources towards core business activities.",
                         "- Scalability and Flexibility: Cloud computing enables quick scaling up or down based on demand, ensuring that the company’s technology infrastructure can adapt to varying levels of activity without downtime.",
-                        "- Data Management: Cloud platforms offer robust data storage solutions that support data analytics, enabling Coca-Cola to make informed decisions based on real-time insights from consumer behavior and market trends."
+                        "- Data Management: Cloud platforms offer robust data storage solutions that support data analytics, enabling Coca-Cola to make informed decisions based on real-time insights from consumer behavior and market trends.",
+                        "Testing 1212", 
+                        "Testing 3434",
+                        "Testing 4545",
+                        "Testing 5656"
                     ]
                 }
             ]
@@ -222,11 +229,12 @@ def dictToPpt(inputDict: dict):
     # Add content slides
     for slide in inputDict["slides"]:
         addContentSlide(prs, slide)
-    
 
     prs.save('PPT.pptx')
 
+    print("generation fisihsed")
 
+    # shrinkTextInPowerpoint('PPT.pptx')
 
 
 ### Helper method to add a title slide to the presentation, aka the first slide
@@ -267,27 +275,94 @@ def addContentSlide(prs: Presentation, slideDict: dict):
     #   - Placeholder 10: Date Placeholder 3
     #   - Placeholder 11: Footer Placeholder 4
     #   - Placeholder 12: Slide Number Placeholder 5
-    slide = prs.slides.add_slide(prs.slide_layouts[1])
-    slide.shapes.title.text = slideDict["title"].strip()
-    
-    contentTextFrame = slide.placeholders[1].text_frame
-    contentTextFrame.clear()
-
-    if len(contentTextFrame.paragraphs) > 0:
-        contentTextFrame.paragraphs[0]._element.getparent().remove(contentTextFrame.paragraphs[0]._element)
-
+    currentSlide = addLayout1(prs, slideDict["title"])
+    contentTextFrame = currentSlide.placeholders[1].text_frame
+    wordCount = 0    
     for content in slideDict["content"]:
+        newContentWordCount = len(content["bulletPoint"].split()) + sum([len(detail.split()) for detail in content["details"]])
+        if wordCount != 0 and wordCount + newContentWordCount > 120:
+            currentSlide = addLayout1(prs, slideDict["title"])
+            contentTextFrame = currentSlide.placeholders[1].text_frame
+            wordCount = 0
+        
         p = contentTextFrame.add_paragraph()
         p.text = content["bulletPoint"]
-        p.space_after = Pt(5)
         p.level = 0
+        p.font.size = Pt(22)
 
         for detail in content["details"]:
             p = contentTextFrame.add_paragraph()
+            detail = detail.strip()[2:] if detail.startswith("- ") else detail.strip()
             p.text = detail
-            p.space_after = Pt(3)
             p.level = 1
+            p.font.size = Pt(18)
 
+        wordCount += newContentWordCount
+
+
+
+def addLayout1(prs: Presentation, title: str) -> Slide:
+    """ Add a slide with layout 1 (title and content) to the presentation. """
+    slide = prs.slides.add_slide(prs.slide_layouts[1])
+    slide.shapes.title.text = title.strip()
+    slide.shapes.title.text_frame.paragraphs[0].font.bold = True
+    slide.shapes.title.text_frame.paragraphs[0].font.size = Pt(40)
+    slide.shapes.title.text_frame.paragraphs[0].alignment = PP_ALIGN.LEFT
+
+    contentTextFrame = slide.placeholders[1].text_frame
+    contentTextFrame.clear()
+    contentTextFrame.auto_size = MSO_AUTO_SIZE.TEXT_TO_FIT_SHAPE
+    contentTextFrame.fit_text()
+    # Remove the default empty paragraph
+    if len(contentTextFrame.paragraphs) > 0:
+        contentTextFrame.paragraphs[0]._element.getparent().remove(contentTextFrame.paragraphs[0]._element)
+
+    return slide
+
+
+def shrinkTextInPowerpoint(file_path: str) -> None:
+    try:
+        powerpoint = win32com.client.Dispatch("PowerPoint.Application")
+        powerpoint.Visible = True
+
+        presentation = powerpoint.Presentations.Open(os.path.abspath(file_path))
+
+        for slide in presentation.Slides:
+            for shape in slide.Shapes:
+                if shape.HasTextFrame:
+                    text_frame = shape.TextFrame
+                    text_range = text_frame.TextRange
+                    print(f"Found text frame with text : {text_range.Text}")
+
+                    shrinkHappened = shrinkText(text_frame)
+                    if shrinkHappened:
+                        adjustFirstLineFontSize(text_frame)
+        
+        presentation.Save()
+        presentation.Close()
+        powerpoint.Quit()
+    except Exception as e:
+        print(f"Error: {e}")
+
+def shrinkText(textFrame) -> bool:
+    textRange = textFrame.TextRange
+    shrunk = False
+    while textRange.BoundHeight > textFrame.Parent.Height and textRange.Font.Size > 10:
+        textRange.Font.Size -= 1
+        shrunk = True
+        print(f"Shrunk text to {textRange.Font.Size}")
+    return shrunk
+
+def adjustFirstLineFontSize(textFrame) -> None:
+    textRange = textFrame.TextRange
+    textContent = textRange.Text.strip()
+    lines = textContent.split("\n")
+
+    if lines:
+        firstLine = lines[0]
+        restText = "\n".join(lines[1:])
+        textRange.Text = firstLine + "\n" + restText
+        textRange.Words(1, len(firstLine)).Font.Size += 2
 
 dictToPpt(testDict)
 
