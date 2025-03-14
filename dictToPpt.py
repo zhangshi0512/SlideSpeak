@@ -1,6 +1,8 @@
 from pptx import Presentation
 from pptx.slide import Slide
 from pptx.util import Pt
+from pptx.enum.text import MSO_AUTO_SIZE
+from pptx.util import Inches
 
 
 ### Helper method to preview the slide layouts available in a PowerPoint presentation
@@ -270,8 +272,19 @@ def addContentSlide(prs: Presentation, slideDict: dict):
     slide = prs.slides.add_slide(prs.slide_layouts[1])
     slide.shapes.title.text = slideDict["title"].strip()
     
-    contentTextFrame = slide.placeholders[1].text_frame
-    contentTextFrame.clear()
+    title_height = slide.shapes.title.height
+
+    slide_width = prs.slide_width
+    slide_height = prs.slide_height
+
+    # contentTextFrame = slide.placeholders[1].text_frame
+    # contentTextFrame.clear()
+    textbox = slide.shapes.add_textbox(Inches(0.5), title_height + Inches(0.5), slide_width - Inches(1), slide_height - title_height- Inches(1))
+    contentTextFrame = textbox.text_frame
+
+    contentTextFrame.word_wrap = True
+    contentTextFrame.fit_text()
+    contentTextFrame.auto_size = MSO_AUTO_SIZE.TEXT_TO_FIT_SHAPE
 
     if len(contentTextFrame.paragraphs) > 0:
         contentTextFrame.paragraphs[0]._element.getparent().remove(contentTextFrame.paragraphs[0]._element)

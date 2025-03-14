@@ -17,7 +17,7 @@ def initialOutlinePrompt() -> str:
 
     - Ensure the outline is **logically organized** with a clear flow of information.  
     - Each slide should focus on **one key idea** to maintain clarity.  
-    - Use **concise yet informative** bullet points or short paragraphs for each slide.  
+    - Use **concise yet informative** bullet points or short paragraphs for each slide. For each slide, words must not overflow.  
     - If relevant, suggest visuals that enhance understanding, but **avoid unnecessary visuals.**  
     - The total number of slides should be determined **dynamically**, based on the depth required for the topic.  
     
@@ -92,6 +92,8 @@ def perSlideEnrichmentPrompt() -> str:
     Your task is to **enrich** the provided slide content where necessary by:
     - Expanding each bullet point with **more details, examples, or explanations**.
     - Breaking down complex ideas into **sub-points** where relevant. 
+    - "content" can have less than three elements. if there are more than three elements make sure in that case "details" must have at most two elements
+    - each string in "details" must be informative concise, "details" should have less than 4 elements.
 
     Keep responses **clear and presentation-friendly**.
 
@@ -138,11 +140,16 @@ def perSlideEnrich(topic: str, outline: str) -> dict:
 def process(topic: str, use_chunking=True):
     # Generate initial outline
     outlineText = gpt.gpt_summarise(system=initialOutlinePrompt(), text=topic)
-    print("Initial outline generated.")
+    with open("./output/testData.json", "w", encoding="utf-8") as file:
+        formatted = json.loads(outlineText)
+        json.dump(formatted, file, indent=4)
+    print("Initial outline generated and saved.")
     
     # Enrich content slide by slide
     enrichedOutline = perSlideEnrich(topic, outlineText)
-    print("Outline enriched slide by slide.")
+    with open("./output/detailed.json", "w") as file:
+        json.dump(enrichedOutline, file, indent=4)
+    print("Outline enriched slide by slide and saved.")
     
     # Convert enriched outline to TTS-ready speech script using the speech_generator module
     speech_text = speech_generator.outline_to_speech(enrichedOutline, use_chunking=use_chunking)
