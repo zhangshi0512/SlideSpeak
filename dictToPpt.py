@@ -38,7 +38,7 @@ def dictToPpt(inputDict: dict, speech_text=None):
 
     print("Generation finished")
 
-    # Uncomment if you want to use the shrinking functionality
+    # Uncomment if you want to use the shrinking functionality NOTE: Only works on Windows machine
     # shrinkTextInPowerpoint('PPT.pptx')
 
 
