@@ -1,6 +1,5 @@
 from typing import List
 import sys, os, json
-import gpt
 
 cur_dir = os.path.dirname(os.path.abspath(__file__))
 parent_dir = os.path.dirname(cur_dir)
@@ -21,7 +20,7 @@ def initialOutlinePrompt() -> str:
     - If relevant, suggest visuals that enhance understanding, but **avoid unnecessary visuals.**  
     - The total number of slides should be determined **dynamically**, based on the depth required for the topic.  
     
-    Format the response as JSON with the following structure: 
+    Strictly format the response as JSON with the following structure:
     {
         "title": "<Presentation Title>",
         "slides": [
@@ -36,9 +35,13 @@ def initialOutlinePrompt() -> str:
             ...
         ]
     }
+
+    **Important:**  
+    - Validate the output format before finalizing. 
     """
 
 # need somehow make model align with the output format 
+# Deprecated, due to often failure of the model to generate the correct output format
 def oneStepEnrichmentPrompt() -> str:
     return """
     You are an expert assistant that enhances PowerPoint slides by expanding on key points while keeping the content structured, clear, and concise.
@@ -159,7 +162,7 @@ def process(topic: str, use_chunking=True):
 
 if __name__ == "__main__":
     # Simple example of processing a topic
-    topic = "Coca-Cola's use of Cloud Computing"
+    topic = "AI Acceleration on Edge Devices: A Deep Dive into NPUs, TPUs, and GPUs"
     print(f"Generating presentation and speech for topic: '{topic}'")
     
     # Default: Use chunked processing for smaller LLMs
