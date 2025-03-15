@@ -1,6 +1,6 @@
 import pdf2final_list
 import dictToPpt
-import text2audio
+# import text2audio_pyttsx3
 import json
 
 result = pdf2final_list.process("Coca-Cola's use of Cloud Computing")
@@ -22,4 +22,4 @@ with open(speech_text_path, "w", encoding="utf-8") as file:
 # Pass the speech_text to dictToPpt to include it in speaker notes
 dictToPpt.dictToPpt(enriched_outline, speech_text)
 print("*"*18)
-text2audio.text_to_speech(speech_text)
+# text2audio_pyttsx3.text_to_speech(speech_text)
