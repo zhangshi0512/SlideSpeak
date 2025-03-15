@@ -2,3 +2,4 @@ __pycache__/
 *.pptx
 *.wav
 *.md
+kokoro-v1.0.onnx
