@@ -47,10 +47,15 @@ Before running PresentSmart, ensure you have the following installed and set up:
     ```
 
 3.  **Pull Ollama models**:
+
     ```bash
     ollama pull qwen2.5:7b
     ollama pull erwan2/DeepSeek-Janus-Pro-7B
     ```
+
+4.  **Kokoro TTS Models**:
+    - Download the Kokoro TTS model files and place them in the root directory of the project.
+    - Download `kokoro-v1.0.onnx` from [https://github.com/thewh1teagle/kokoro-onnx/releases/download/model-files-v1.0/kokoro-v1.0.onnx](https://github.com/thewh1teagle/kokoro-onnx/releases/download/model-files-v1.0/kokoro-v1.0.onnx) and `voices-v1.0.bin` from [https://github.com/thewh1teagle/kokoro-onnx/releases/download/model-files-v1.0/voices-v1.0.bin](https://github.com/thewh1teagle/kokoro-onnx/releases/download/model-files-v1.0/voices-v1.0.bin).
 
 ## Running the Application
 
