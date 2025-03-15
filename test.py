@@ -175,7 +175,7 @@ def generateSlideSpeech(enriched_outline):
         
 
 if __name__ == "__main__":
-    topic = "Edge AI vs. Cloud AI: The Battle for the Future of Computing"
+    topic = "kfc and macdonald in china"
     # # ### Generate initial outline
     outlineText = gpt.gpt_summarise(system=pdf2final_list.initialOutlinePrompt(), text=topic)
     print(outlineText)
