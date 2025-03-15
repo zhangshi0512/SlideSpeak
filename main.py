@@ -5,8 +5,11 @@ import tkinter as tk
 import subprocess
 import os
 
+# Create the output directory if it doesn't exist
+os.makedirs("./output", exist_ok=True)
+
 # 1) Generate the transcript, as you already do:
-result = pdf2final_list.process("Coca-Cola's use of Cloud Computing")
+result = pdf2final_list.process("claude vs gpt")
 
 enriched_outline = result["enriched_outline"]
 speech_text = result["speech_text"]

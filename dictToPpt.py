@@ -30,9 +30,15 @@ def dictToPpt(inputDict: dict, speech_text=None):
 
     # Add content slides
     for i, slide in enumerate(inputDict["slides"]):
-        # Get the corresponding speech section for this slide if available
-        slide_notes = speech_sections.get(slide["title"], "")
-        addContentSlide(prs, slide, slide_notes)
+        # Check if the slide has pre-generated speech
+        slide_speech = slide.get("speech", "")
+        
+        # If no pre-generated speech, try to get it from speech_sections
+        if not slide_speech and speech_text:
+            slide_speech = speech_sections.get(slide["title"], "")
+        
+        # Add the slide with appropriate speaker notes
+        addContentSlide(prs, slide, slide_speech)
 
     prs.save('PPT.pptx')
 
@@ -98,43 +104,58 @@ def setTitlePageStyle(slide: Slide):
 
 
 # Helper method, Add content of slide object inside slides from the inputDictp
-# The input slideDict should shape like this:
+# The input slideDict now supports the enhanced format from test.py:
 # {
 #   "title": str,
 #   "content":[
 #      {
 #        "bulletPoint": str,
+#        "shortSubPoints": [str, str, ...],
 #        "details": [str, str, ...]
 #      }, ... 
-#   ]
+#   ],
+#   "speech": str (optional)
 # } 
 def addContentSlide(prs: Presentation, slideDict: dict, speaker_notes=""):
-    # Presentation.slide_layouts[0] has the following layout (by default):
-    #   - Placeholder 0: Title 1
-    #   - Placeholder 1: Content Placeholder 2
-    #   - Placeholder 10: Date Placeholder 3
-    #   - Placeholder 11: Footer Placeholder 4
-    #   - Placeholder 12: Slide Number Placeholder 5
-    
     # Create the first slide for this topic
     currentSlide = addLayout1(prs, slideDict["title"])
     contentTextFrame = currentSlide.placeholders[1].text_frame
     wordCount = 0
     
     # First, add speaker notes to the first slide
-    if speaker_notes and hasattr(currentSlide, 'notes_slide'):
+    if hasattr(currentSlide, 'notes_slide'):
         notes_slide = currentSlide.notes_slide
         notes_textframe = notes_slide.notes_text_frame
         
         # Clean up the notes by removing special markers for TTS
-        clean_notes = re.sub(r'\[PAUSE=\d+\]', '', speaker_notes)
-        clean_notes = re.sub(r'\[SLIDE CHANGE\]', '', clean_notes)
+        if speaker_notes:
+            clean_notes = re.sub(r'\[PAUSE=\d+\]', '', speaker_notes)
+            clean_notes = re.sub(r'\[SLIDE CHANGE\]', '', clean_notes)
+            notes_textframe.text = clean_notes.strip()
         
-        notes_textframe.text = clean_notes.strip()
+        # If slide has speech directly from test.py format
+        elif slideDict.get("speech"):
+            clean_notes = re.sub(r'\[PAUSE=\d+\]', '', slideDict["speech"])
+            clean_notes = re.sub(r'\[SLIDE CHANGE\]', '', clean_notes)
+            notes_textframe.text = clean_notes.strip()
     
     # Then add content, potentially creating additional slides if needed
     for content in slideDict["content"]:
-        newContentWordCount = len(content["bulletPoint"].split()) + sum([len(detail.split()) for detail in content["details"]])
+        # The content now follows the enhanced structure from test.py
+        # Extract the bulletPoint
+        bulletPoint = content.get("bulletPoint", "")
+        
+        # Check if we have shortSubPoints, otherwise fall back to details
+        shortSubPoints = content.get("shortSubPoints", [])
+        details = content.get("details", [])
+        
+        # Use shortSubPoints if available, otherwise use details
+        subPoints = shortSubPoints if shortSubPoints else details
+        
+        # Calculate word count for this content
+        newContentWordCount = len(bulletPoint.split())
+        if subPoints:
+            newContentWordCount += sum([len(point.split()) for point in subPoints])
         
         # If content is too large, create a new slide
         if wordCount != 0 and wordCount + newContentWordCount > 120:
@@ -145,14 +166,16 @@ def addContentSlide(prs: Presentation, slideDict: dict, speaker_notes=""):
             # No speaker notes for additional slides with the same title
         
         p = contentTextFrame.add_paragraph()
-        p.text = content["bulletPoint"]
+        p.text = bulletPoint
         p.level = 0
         p.font.size = Pt(22)
 
-        for detail in content["details"]:
+        for point in subPoints:
             p = contentTextFrame.add_paragraph()
-            detail = detail.strip()[2:] if detail.strip().startswith("- ") else detail.strip()
-            p.text = detail
+            point_text = point.strip()
+            if point_text.startswith("- "):
+                point_text = point_text[2:]
+            p.text = point_text
             p.level = 1
             p.font.size = Pt(18)
 

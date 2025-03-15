@@ -320,14 +320,106 @@ def outline_to_speech(content: Union[Dict[str, Any], str], use_chunking: bool = 
             return process_text_content_chunked(content_str)
 
 
-def save_speech_to_file(speech_text: str, filename: str = "presentation_speech.md") -> None:
+def create_speech_from_enriched_outline(enriched_outline: dict) -> str:
+    """
+    Create a complete speech script from an enriched outline with pregenerated speech components.
+    This function uses the introduction and per-slide speech text that has already been generated
+    and combines them with proper transitions and formatting.
+    
+    Args:
+        enriched_outline (dict): The enriched outline with introduction and slide speech
+        
+    Returns:
+        str: Complete speech script for TTS
+    """
+    # Extract introduction
+    introduction = enriched_outline.get('introduction', '')
+    if not introduction:
+        # Generate introduction if not present
+        title = enriched_outline.get('title', 'Presentation')
+        slide_titles = [slide['title'] for slide in enriched_outline.get('slides', [])]
+        intro_prompt = f"""
+        Title: {title}
+        Main sections: {', '.join(slide_titles)}
+        
+        Create an introduction for this presentation.
+        """
+        introduction = gpt_summarise(
+            system=generate_speech_introduction_prompt(),
+            text=intro_prompt
+        )
+    
+    # Combine slide speeches with transitions
+    speech_sections = []
+    slides = enriched_outline.get('slides', [])
+    
+    for i, slide in enumerate(slides):
+        # Get pregenerated speech for this slide or generate it if not present
+        slide_speech = slide.get('speech', '')
+        if not slide_speech:
+            # Create a simplified version of the slide content
+            simplified_content = []
+            for item in slide.get('content', []):
+                if isinstance(item, dict) and 'bulletPoint' in item:
+                    bullet = item.get('bulletPoint', '')
+                    details = ' '.join(item.get('details', [])[:2])
+                    simplified_content.append(f"{bullet} - {details[:200]}")
+                else:
+                    simplified_content.append(str(item)[:200])
+            
+            # Generate speech for this slide
+            slide_prompt = f"""
+            Slide Title: {slide.get('title', 'Slide')}
+            
+            Key Points:
+            - {' '.join(simplified_content[:5])}
+            
+            Convert this into a natural speech section.
+            """
+            slide_speech = gpt_summarise(
+                system=generate_speech_section_prompt(),
+                text=slide_prompt
+            )
+        
+        # Add transition except for the last slide
+        if i < len(slides) - 1:
+            next_slide = slides[i+1].get('title', 'Next Topic')
+            slide_speech += f" [PAUSE=1] Moving on to our next topic: {next_slide}. [SLIDE CHANGE]"
+        
+        speech_sections.append(slide_speech)
+    
+    # Generate conclusion
+    title = enriched_outline.get('title', 'Presentation')
+    slide_titles = [slide.get('title', f"Slide {i+1}") for i, slide in enumerate(slides)]
+    conclusion_prompt = f"""
+    Title: {title}
+    Main sections covered: {', '.join(slide_titles)}
+    
+    Create a brief conclusion.
+    """
+    
+    conclusion = gpt_summarise(
+        system=generate_speech_conclusion_prompt(),
+        text=conclusion_prompt
+    )
+    
+    # Combine all parts
+    full_speech = introduction + "\n\n" + "\n\n".join(speech_sections) + "\n\n" + conclusion
+    
+    return full_speech
+
+
+def save_speech_to_file(speech_text: str, filename: str = "./output/presentation_speech.md") -> None:
     """
     Save the generated TTS-ready speech script to a markdown file.
     
     Args:
         speech_text (str): The speech content
-        filename (str): The filename to save to (default: presentation_speech.md)
+        filename (str): The filename to save to (default: ./output/presentation_speech.md)
     """
+    # Create output directory if it doesn't exist
+    os.makedirs(os.path.dirname(filename), exist_ok=True)
+    
     with open(filename, "w", encoding="utf-8") as f:
         f.write(speech_text)
     print(f"TTS-ready speech script saved to {filename}")
@@ -365,6 +457,9 @@ def process_existing_content(content_text: str, topic: str = "", use_chunking: b
     
     return speech_text
 
+
+# Add import for os module needed for save_speech_to_file function
+import os
 
 if __name__ == "__main__":
     # Simple example usage
