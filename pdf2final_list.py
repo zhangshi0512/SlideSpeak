@@ -92,8 +92,8 @@ def perSlideEnrichmentPrompt() -> str:
     Your task is to **enrich** the provided slide content where necessary by:
     - Expanding each bullet point with **more details, examples, or explanations**.
     - Breaking down complex ideas into **sub-points** where relevant. 
-    - "content" can have less than three elements. if there are more than three elements make sure in that case "details" must have at most two elements
-    - each string in "details" must be informative concise, "details" should have less than 4 elements.
+    - "content" can have less than 2 to 4 elements. If there are more than three elements make sure in that case "details" must have at most two elements
+    - **each** string in "details" must be informative concise with less than 30 words, "details" should have less than 3 elements.
 
     Keep responses **clear and presentation-friendly**.
 

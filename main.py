@@ -3,7 +3,7 @@ import pdf2final_list
 import dictToPpt
 import text2audio
 
-result = pdf2final_list.process("NBA during jordan's era")
+result = pdf2final_list.process("common types of birds in seattle for birding")
 
 enriched_outline = result["enriched_outline"]
 
