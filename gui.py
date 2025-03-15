@@ -11,7 +11,7 @@ import dictToPpt
 class PresentSmartGUI:
     def __init__(self, root):
         self.root = root
-        self.root.title("PresentSmart - AI Presentation Generator")
+        self.root.title("SlideSpeak - AI Presentation Generator")
         self.root.configure(bg='#f5f5f5')
         self.root.geometry('800x600')
         
@@ -54,9 +54,9 @@ class PresentSmartGUI:
         
         ttk.Label(model_frame, text="Content Generation Model:").pack(side=tk.LEFT)
         
-        self.model_var = tk.StringVar(value="qwen2.5:7b")
+        self.model_var = tk.StringVar(value="qwen2.5:3b")
         model_dropdown = ttk.Combobox(model_frame, textvariable=self.model_var, 
-                                      values=["qwen2.5:7b", "erwan2/DeepSeek-Janus-Pro-7B"], 
+                                      values=["qwen2.5:3b", "erwan2/DeepSeek-Janus-Pro-7B"], 
                                       state="readonly", width=25)
         model_dropdown.pack(side=tk.LEFT, padx=(10, 0))
         

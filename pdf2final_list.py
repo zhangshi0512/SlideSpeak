@@ -83,7 +83,7 @@ def textEnrichmentPrompt() -> str:
 # Updated version of per slide enrichment from test.py
 def perSlideEnrich(topic: str, outline: str) -> dict:
     try:
-        outline = json.loads(outline)
+        outline = json.loads(outline.replace("```json", "").replace("```", ""))
     except json.JSONDecodeError:
         print("Error: Could not parse outline JSON. Using empty structure.")
         outline = {"title": "Presentation", "slides": []}
@@ -170,6 +170,7 @@ def process(topic: str, use_chunking=True):
     # Generate initial outline
     outlineText = gpt.gpt_summarise(system=initialOutlinePrompt(), text=topic)
     print("Initial outline generated.")
+    print(outlineText)
     
     # Enrich content slide by slide
     enrichedOutline = perSlideEnrich(topic, outlineText)

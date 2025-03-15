@@ -5,7 +5,7 @@ import requests, json
 def gpt_summarise(system, text):
     url = "http://localhost:11434/api/chat"
     payload = {
-        "model": "qwen2.5:7b",
+        "model": "qwen2.5:3b",
         "messages": [
             {"role": "system", "content": system},
             {"role": "user", "content": text}
