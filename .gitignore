@@ -3,5 +3,11 @@ __pycache__/
 *.wav
 *.md
 kokoro-v1.0.onnx
+
 voices-v1.0.bin
 cache/
+
+.DS_Store
+stable-diffusion-model
+/stable-diffusion/stable-diffusion-model/
+
