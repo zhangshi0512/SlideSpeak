@@ -97,6 +97,17 @@ class SlideSpeakGUI:
         npu_radio = ttk.Radiobutton(
             device_frame, text="NPU", variable=self.device_var, value="NPU")
         npu_radio.pack(side=tk.LEFT)
+        
+        # Image generation option
+        image_frame = ttk.Frame(options_frame)
+        image_frame.pack(fill=tk.X, pady=5)
+        
+        ttk.Label(image_frame, text="Generate Images:").pack(side=tk.LEFT)
+        
+        self.generate_images_var = tk.BooleanVar(value=False)
+        image_checkbox = ttk.Checkbutton(
+            image_frame, text="Include images in presentation", variable=self.generate_images_var)
+        image_checkbox.pack(side=tk.LEFT, padx=(10, 0))
 
         # Save location
         save_frame = ttk.Frame(options_frame)
