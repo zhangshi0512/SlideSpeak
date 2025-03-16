@@ -59,17 +59,17 @@ graph LR
     D --> J[pyttsx3 library]
     E --> K[kokoro library]
 
-    style A fill:#f9f,stroke:#333,stroke-width:2px
-    style B fill:#ccf,stroke:#333,stroke-width:2px
-    style C fill:#ccf,stroke:#333,stroke-width:2px
-    style D fill:#ccf,stroke:#333,stroke-width:2px
-    style E fill:#ccf,stroke:#333,stroke-width:2px
-    style F fill:#aaf,stroke:#333,stroke-width:2px
-    style G fill:#aaf,stroke:#333,stroke-width:2px
-    style H fill:#eee,stroke:#333,stroke-width:2px,stroke-dasharray: 5 5
-    style I fill:#eee,stroke:#333,stroke-width:2px,stroke-dasharray: 5 5
-    style J fill:#eee,stroke:#333,stroke-width:2px,stroke-dasharray: 5 5
-    style K fill:#eee,stroke:#333,stroke-width:2px,stroke-dasharray: 5 5
+    style A fill:#f9f,stroke:#333,stroke-width:2px,color:#333333
+    style B fill:#ccf,stroke:#333,stroke-width:2px,color:#333333
+    style C fill:#ccf,stroke:#333,stroke-width:2px,color:#333333
+    style D fill:#ccf,stroke:#333,stroke-width:2px,color:#333333
+    style E fill:#ccf,stroke:#333,stroke-width:2px,color:#333333
+    style F fill:#aaf,stroke:#333,stroke-width:2px,color:#333333
+    style G fill:#aaf,stroke:#333,stroke-width:2px,color:#333333
+    style H fill:#eee,stroke:#333,stroke-width:2px,stroke-dasharray: 5 5,color:#333333
+    style I fill:#eee,stroke:#333,stroke-width:2px,stroke-dasharray: 5 5,color:#333333
+    style J fill:#eee,stroke:#333,stroke-width:2px,stroke-dasharray: 5 5,color:#333333
+    style K fill:#eee,stroke:#333,stroke-width:2px,stroke-dasharray: 5 5,color:#333333
 
     subgraph Application
         A
