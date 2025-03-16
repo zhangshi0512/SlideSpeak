@@ -34,6 +34,8 @@ SlideSpeak is a Python-based AI tool designed for:
 
 It utilizes local Large Language Models (LLMs) served by Ollama to generate presentation outlines and slide content. Additionally, it integrates a local Text to Speech (TTS) model to convert speech transcripts into audio files.
 
+![application_interface](/screenshots/main_gui.jpg)
+
 ## Architecture
 
 The following diagram illustrates the main components of SlideSpeak and their relationships:
