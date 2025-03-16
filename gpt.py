@@ -3,21 +3,51 @@ import requests, json
 
 
 def gpt_summarise(system, text):
-    url = "http://localhost:11434/api/chat"
-    payload = {
-        "model": "qwen2.5:7b",
-        "messages": [
-            {"role": "system", "content": system},
-            {"role": "user", "content": text}
-        ],
-        "stream": False
+    print("API calls")
+
+    api_key = "SRSNR19-JBZMJTZ-NJ0TSSA-WF6FN4G"
+    base_url = "http://localhost:3001/api/v1"
+    workspace_slug = "jyc"
+
+    chat_url = f"{base_url}/workspace/{workspace_slug}/chat"
+
+    url = chat_url
+    # url = "http://localhost:11434/api/chat"
+
+    # payload = {
+    #     "model": "qwen2.5:7b",
+    #     "messages": [
+    #         {"role": "system", "content": system},
+    #         {"role": "user", "content": text}
+    #     ],
+    #     "stream": False
+    # }
+
+    # headers = {'Content-Type': 'application/json'}  
+
+    headers = {
+        "accept": "application/json",
+        "Content-Type": "application/json",
+        "Authorization": "Bearer " + api_key
     }
-    headers = {'Content-Type': 'application/json'}  
+
+    data ={
+        "message": system + text,
+        # "message": "hello there!",
+        "mode": "chat",
+        "sessionId": "ppt_generate",
+        "attachments": []
+    }
+    print("start to try!")
+
     try:
-        response = requests.post(url, headers=headers, json=payload)
+        response = requests.post(url, headers=headers, json=data)
+        # print("posted")
         response.raise_for_status()
         
-        return response.json()['message']['content']
+        # return response.json()['message']['content']
+        # print(response.json()['textResponse'])
+        return response.json()['textResponse']
             
         # for line in response.iter_lines(decode_unicode=True):
         #     if line:

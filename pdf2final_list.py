@@ -166,7 +166,7 @@ def process(topic: str, use_chunking=True):
 
 if __name__ == "__main__":
     # Simple example of processing a topic
-    topic = "Coca-Cola's use of Cloud Computing"
+    topic = "Geography of India"
     print(f"Generating presentation and speech for topic: '{topic}'")
     
     # Default: Use chunked processing for smaller LLMs
