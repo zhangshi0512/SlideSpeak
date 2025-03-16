@@ -174,9 +174,10 @@ def generateSlideSpeech(enriched_outline):
     return enriched_outline
 
 
-def process(topic: str, use_chunking=True):
+def process(topic: str, device_type="CPU", use_chunking=True):  # Added device_type parameter
     # Generate initial outline
-    outlineText = gpt.gpt_summarise(system=initialOutlinePrompt(), text=topic)
+    outlineText = gpt.gpt_summarise(system=initialOutlinePrompt(
+    ), text=topic, device_type=device_type)  # Pass device_type
     print("Initial outline generated.")
     print(outlineText)
 
@@ -213,4 +214,4 @@ if __name__ == "__main__":
     print(f"Generating presentation and speech for topic: '{topic}'")
 
     # Default: Use chunked processing for smaller LLMs
-    result = process(topic)
+    result = process(topic, device_type="CPU")  # Pass device_type
