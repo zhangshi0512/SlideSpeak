@@ -37,7 +37,7 @@ def gpt_summarise(system, text, device_type="CPU"):
         print("Using CPU API")
         url = "http://localhost:11434/api/chat"
         payload = {
-            "model": "qwen2.5:7b",
+            "model": "qwen2.5:3b",
             "messages": [
                 {"role": "system", "content": system},
                 {"role": "user", "content": text}
