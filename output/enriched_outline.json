@@ -1,156 +1,181 @@
 {
-    "title": "On Device AI Qualcomm Technology",
+    "title": "On Device AI",
     "slides": [
         {
-            "title": "Introduction to On-Demand AI",
+            "title": "Introduction to On-Device AI",
             "content": [
                 {
-                    "bulletPoint": "Overview of the importance of AI on device",
+                    "bulletPoint": "- On-device AI refers to processing of machine learning models directly on end devices like smartphones or IoT sensors.",
                     "shortSubPoints": [
-                        "Reduced latency",
-                        "Increased security",
+                        "End devices",
+                        "Machine learning models"
+                    ],
+                    "details": [
+                        "Faster response times",
+                        "Increased privacy",
+                        "Localized intelligence"
+                    ]
+                },
+                {
+                    "bulletPoint": "- It enables faster and more personalized experiences without relying solely on cloud servers.",
+                    "shortSubPoints": [
+                        "Personalization",
                         "Real-time processing"
                     ],
                     "details": [
-                        "On-device AI allows for real-time processing, eliminating the need for constant internet connectivity, reducing latency and enhancing user experience.",
-                        "This approach also increases data security as sensitive information is processed locally, reducing exposure to potential online threats."
+                        "Improved user experience",
+                        "Reduced latency",
+                        "Better resource utilization"
                     ]
-                },
+                }
+            ],
+            "speech": "Let's discuss introduction to On-Device AI. On-device AI is all about processing machine learning models directly on devices like smartphones or IoT sensors. This not only gives us faster response times and increased privacy, but also localized intelligence that can provide more personalized experiences without constantly relying solely on cloud servers. It significantly improves our user experience by reducing latency and better utilizing resources, making things run smoother and quicker. Let's pause here for a moment."
+        },
+        {
+            "title": "Advantages of On-Device AI",
+            "content": [
                 {
-                    "bulletPoint": "Benefits: reduced latency, increased security, and real-time processing",
+                    "bulletPoint": "- Reduced latency: No need for data transfer to the cloud, resulting in quicker responses.",
                     "shortSubPoints": [
                         "Faster response times",
-                        "Enhanced personal data security"
+                        "Improved user experience"
                     ],
                     "details": [
-                        "With on-device AI, users can enjoy snappier interactions with their devices, while also benefiting from enhanced data security features.",
-                        "As AI is executed locally, companies can also tap into new business opportunities, like increased productivity and cost savings through efficient on-device processing."
-                    ]
-                }
-            ],
-            "speech": "Let's discuss Introduction to On-Demand AI.\n\nOn-device AI is the future of artificial intelligence, and it's changing the way we think about technology. By processing data in real time, on your device, you can enjoy a faster, more secure, and more convenient experience. With on-device AI, you can access your information without relying on the internet, reducing latency and making your interactions feel smoother. This approach also gives companies a new way to create value, by offering more efficient and secure services."
-        },
-        {
-            "title": "Qualcomm's On-Demand AI Technology",
-            "content": [
-                {
-                    "bulletPoint": "Description of the technology: neural processing units, software framework, and SDKs",
-                    "shortSubPoints": [
-                        "Neural Processing Units (NPUs)",
-                        "Unified Software Framework",
-                        "Software Development Kits (SDKs)"
-                    ],
-                    "details": [
-                        "The technology utilizes NPUs that provide optimized performance for AI computations.",
-                        "A unified software framework enables seamless integration with existing Qualcomm chips."
+                        "Data is processed locally on the device, reducing wait time.",
+                        "Enhances real-time interactions like voice commands and augmented reality"
                     ]
                 },
                 {
-                    "bulletPoint": "Key features: AI engine, data compression, and power management",
+                    "bulletPoint": "- Increased privacy: Personalized data processing keeps sensitive information local.",
                     "shortSubPoints": [
-                        "Artificial Intelligence (AI) Engine",
-                        "Data Compression",
-                        "Power Management"
+                        "Data stays within the user's control",
+                        "No exposure of personal data to third parties"
                     ],
                     "details": [
-                        "The AI engine enables on-device AI processing, enhancing user experience and enabling new features like language translation, image recognition, and more.",
-                        "Advanced data compression minimizes latency, reducing the need for extensive data storage and transmission.",
-                        "Power management ensures efficient use of on-device resources, extending battery life and reducing heat generation."
-                    ]
-                }
-            ],
-            "visuals": "Diagram of the AI engine architecture",
-            "speech": "Let's discuss Qualcomm's On-Demand AI Technology. This technology utilizes specialized Neural Processing Units, or NPUs, to provide optimized performance for AI computations. A unified software framework enables seamless integration with existing Qualcomm chips, making it easier to develop and deploy AI applications. The key features of this technology include an AI engine, advanced data compression, and power management, which work together to enhance the user experience and enable new features like language translation, image recognition, and more. [PAUSE=1] This approach enables on-device AI processing, minimizing latency and the need for extensive data storage and transmission. [PAUSE=1]"
-        },
-        {
-            "title": "Technical Specifications and Performance",
-            "content": [
-                {
-                    "bulletPoint": "Technical details: AI engine specifications, power consumption, and performance metrics",
-                    "shortSubPoints": [
-                        "AI Engine Specifications",
-                        "Power Consumption Metrics",
-                        "Performance Metrics"
-                    ],
-                    "details": [
-                        "The AI engine specifications include the processing speed, memory requirements, and model size.",
-                        "Power consumption metrics include the energy efficiency, thermal design, and power management features."
+                        "Sensitive information does not leave the device, ensuring it remains private and confidential.",
+                        "User data is analyzed locally without being sent to a remote server, reducing privacy risks."
                     ]
                 },
                 {
-                    "bulletPoint": "Examples of on-device AI applications (e.g., camera, audio, gesture recognition)",
+                    "bulletPoint": "- Enhanced battery life: Less energy-consuming compared to remote computing.",
                     "shortSubPoints": [
-                        "Computer Vision",
-                        "Speech Recognition",
-                        "Gesture Recognition"
+                        "Energy savings",
+                        "Extended device lifespan"
                     ],
                     "details": [
-                        "On-device AI enables advanced camera features such as object detection, facial recognition, and scene understanding.",
-                        "AI-powered audio recognition capabilities include noise reduction, voice assistants, and speaker identification."
+                        "Local processing reduces the load on the device's CPU and GPU, extending battery life.",
+                        "By offloading tasks from the device, it doesn't have to work as hard, leading to longer operational hours."
                     ]
                 }
             ],
-            "speech": "Let's discuss technical specifications and performance. The AI engine behind both Claude and GPT has impressive technical details, with processing speeds, memory requirements, and model sizes that make them efficient and effective. When it comes to power consumption, both engines are designed with energy efficiency and thermal management in mind. On-device AI applications range from advanced camera features like object detection and facial recognition, to AI-powered audio recognition that can reduce noise, identify speakers, and even unlock new features like voice assistants. [PAUSE=1]"
+            "speech": "Let's discuss Advantages of On-Device AI. Reduced latency is one big advantage, eliminating the need for data transfer to the cloud which speeds up responses significantly. For instance, it makes real-time interactions like voice commands and augmented reality feel much more instant. Additionally, processing data locally keeps sensitive information private as it doesn't leave the device. This reduces privacy risks by keeping personal details confidential and only analyzing them where they belong—on your own device. Finally, on-device AI also enhances battery life because local tasks are less energy-intensive compared to remote computing processes. This means that devices don’t have to work as hard, leading to longer operational hours without needing a recharge so frequently. Let's pause here for a moment."
         },
         {
-            "title": "AI for a New Era of User Experiences",
+            "title": "Challenges of On-Device AI",
             "content": [
                 {
-                    "bulletPoint": "Description of how on-device AI enhances user experiences (e.g., improved camera performance)",
+                    "bulletPoint": "- Power constraints: Limited computing power on devices can affect model performance.",
                     "shortSubPoints": [
-                        "Enhanced camera functionality",
-                        "Personalized recommendations"
+                        "Power constraints limit the complexity of models that can be run locally.",
+                        "Reduced processing speed impacts real-time applications."
                     ],
                     "details": [
-                        "With on-device AI, cameras can now perform advanced tasks such as real-time tracking and facial recognition.",
-                        "Personalized recommendations for users, tailored to their interests and usage patterns."
+                        "Running a complex machine learning model requires more energy, which is not always available in low-power environments.",
+                        "Lower CPU and GPU speeds mean slower response times for users."
                     ]
                 },
                 {
-                    "bulletPoint": "Future prospects: augmented reality, AI-driven interface, and more",
+                    "bulletPoint": "- Resource Management: Efficiently managing limited resources like memory and processing cores is critical.",
                     "shortSubPoints": [
-                        "Augmented reality capabilities",
-                        "AI-driven interface enhancements"
+                        "Memory management ensures data remains accessible without using up too much storage space.",
+                        "Processing core optimization maximizes utilization of available hardware."
                     ],
                     "details": [
-                        "The future holds exciting possibilities for AI-driven user interfaces, with enhanced features like gesture recognition and voice commands.",
-                        "As the technology evolves, we can expect even more sophisticated AR experiences that blend the digital and physical worlds."
-                    ]
-                }
-            ],
-            "speech": "As we move into this new era of user experiences, AI is playing a crucial role in enhancing our interactions with devices. On-device AI capabilities are unlocking new features, like advanced camera performance, where real-time tracking and facial recognition are now possible. This also enables personalized recommendations, tailored to individual users' interests and habits, making their experience even more engaging. [PAUSE=1] And looking ahead, we can expect even more exciting developments, like augmented reality, AI-driven interfaces, and more, that will seamlessly blend the digital and physical worlds."
-        },
-        {
-            "title": "Key Applications and Use Cases",
-            "content": [
-                {
-                    "bulletPoint": "Examples of on-device AI applications (e.g., camera, audio, security, gaming)",
-                    "shortSubPoints": [
-                        "Camera capabilities",
-                        "Audio and speech recognition",
-                        "Security and threat detection",
-                        "Gaming and entertainment enhancements"
-                    ],
-                    "details": [
-                        "On-device AI enables real-time image processing, allowing for advanced camera features like scene detection and object recognition.",
-                        "Audio and speech recognition capabilities enable voice assistants, audio filtering, and audio enhancement."
+                        "Memory fragmentation can lead to inefficient use, causing models to run slower or crash. ",
+                        "Overloading a single processing core with multiple tasks can deplete system resources quickly."
                     ]
                 },
                 {
-                    "bulletPoint": "Future directions: AI integration in industries (e.g., healthcare, transportation, education)",
+                    "bulletPoint": "- Security Risks: Ensuring data security in local storage and transmission.",
                     "shortSubPoints": [
-                        "Healthcare and medical diagnosis",
-                        "Transportation and navigation enhancements",
-                        "Education and learning aids"
+                        "Data protection mechanisms like encryption are necessary to safeguard sensitive information.",
+                        "Secure communication protocols prevent unauthorized access during data transfer."
                     ],
                     "details": [
-                        "On-device AI can aid in medical diagnosis, detecting anomalies, and recognizing patient conditions.",
-                        "The technology can enhance navigation systems with advanced route planning and real-time traffic monitoring."
+                        "Local storage can be a target for attackers, who might exploit vulnerabilities to extract or manipulate data. ",
+                        "Transmission of data over local networks must be encrypted to prevent interception by third parties."
                     ]
                 }
             ],
-            "speech": "Let's discuss key applications and use cases for on-device AI. This cutting-edge technology enables real-time image processing, allowing for advanced camera features like scene detection and object recognition. On-device AI also powers audio and speech recognition capabilities, making voice assistants, audio filtering, and audio enhancement a reality. As we look to the future, we're excited about the potential for on-device AI to be integrated in industries like healthcare, transportation, and education, enhancing patient care, navigation systems, and educational experiences. [PAUSE=1]"
+            "speech": "Let's discuss the challenges of on-device AI. Power constraints are a major hurdle; limited computing power can significantly affect model performance. Running complex machine learning models requires more energy, and in low-power environments, this is not always available. This leads to slower response times for users. Resource management is also critical here — efficiently managing things like memory and processing cores is essential. For instance, memory fragmentation can cause the model to run slower or crash altogether. Overloading a single processing core with multiple tasks can quickly deplete system resources. On top of that, ensuring data security in local storage and transmission is another big challenge we face. Local storage can be a target for attackers who might exploit vulnerabilities to extract or manipulate data. Transmission of data over local networks must be encrypted to prevent interception by third parties."
+        },
+        {
+            "title": "Techniques for On-Device AI",
+            "content": [
+                {
+                    "bulletPoint": "- Model Compression: Reducing model size to fit available device hardware constraints.",
+                    "shortSubPoints": [
+                        "Reduce model complexity",
+                        "Eliminate unnecessary layers"
+                    ],
+                    "details": [
+                        "Optimize neural networks by pruning weights, merging layers, and simplifying architectures.",
+                        "Implement techniques like Knowledge Distillation for further reduction."
+                    ]
+                },
+                {
+                    "bulletPoint": "- Quantization: Lowering precision of numbers used by a neural network, reducing computational load.",
+                    "shortSubPoints": [
+                        "Reduce number of bits per weight",
+                        "Quantize activations"
+                    ],
+                    "details": [
+                        "Use quantization schemes such as QAT (Quantized Asymmetric Training) and QNN (Quantized Neural Networks).",
+                        "Consider the impact on model accuracy for specific tasks."
+                    ]
+                },
+                {
+                    "bulletPoint": "- Federated Learning: Combining training data from various devices while maintaining user privacy.",
+                    "shortSubPoints": [
+                        "Reduce data transmission",
+                        "Enhance security protocols"
+                    ],
+                    "details": [
+                        "Train models locally using mini-batches of data.",
+                        "Use secure aggregation methods to combine model weights across multiple users without revealing individual contributions."
+                    ]
+                }
+            ],
+            "speech": "Let's discuss Techniques for On-Device AI. Model compression is key, where we reduce the size of models to fit available device hardware constraints. This can be achieved by pruning weights, merging layers, and simplifying architectures. We also use techniques like Knowledge Distillation to further compress these models. Quantization comes next, which involves lowering the precision of numbers used by neural networks to reduce computational load. To make it even more efficient, we use schemes like QAT (Quantized Asymmetric Training) and QNN (Quantized Neural Networks), considering their impact on model accuracy for specific tasks. Finally, Federated Learning allows us to combine training data from various devices while maintaining user privacy by training models locally with mini-batches of data using secure aggregation methods. Let's pause here for a moment."
+        },
+        {
+            "title": "Current Applications",
+            "content": [
+                {
+                    "bulletPoint": "- Smart Home Automation: Devices can learn and adapt to user routines without connecting to the cloud.",
+                    "shortSubPoints": [
+                        "Devices recognize patterns",
+                        "Continuous learning from local data"
+                    ],
+                    "details": [
+                        "Smart lights adjust brightness based on ambient light",
+                        "Thermostats optimize heating/cooling in response to occupancy"
+                    ]
+                },
+                {
+                    "bulletPoint": "- Healthcare: Localized medical monitoring, diagnosis, and treatment recommendations.",
+                    "shortSubPoints": [
+                        "Local sensor networks",
+                        "Self-diagnostic capabilities"
+                    ],
+                    "details": [
+                        "Wearable devices track health metrics locally",
+                        "Health apps analyze data for early warning signs without cloud"
+                    ]
+                }
+            ],
+            "speech": "Let's discuss Current Applications. Smart Home Automation is really interesting where devices can learn your routines without needing to connect to the cloud. For example, smart lights adjust brightness based on ambient light, and thermostats optimize heating or cooling when you're home. In healthcare, we have localized monitoring that allows for diagnoses and treatment recommendations right from wearable devices. Health apps also track health metrics locally and analyze data to spot early warning signs without needing to connect to a cloud server. [PAUSE=1]"
         }
     ],
-    "introduction": "Hello everyone. Today, I will be presenting about On Device AI Qualcomm Technology.\n\n[PAUSE=1]\n\nWith the rapid growth of Artificial Intelligence, Qualcomm has taken the next step by introducing On-Demand AI, a revolutionary technology that empowers devices to process AI capabilities in real-time. Over the next few minutes, we'll explore this exciting innovation, its technical specifications and performance, the impact on user experiences, and its diverse applications and use cases. \n\n[PAUSE=1]"
+    "introduction": "Hello everyone. Today, I will be presenting about On Device AI. We'll start by introducing what On-Device AI is and its basics. Then we’ll explore the advantages it offers and some of the challenges involved. After that, we'll delve into different techniques used for implementing On-Device AI. Finally, I’ll share examples of current applications where On-Device AI is being used. [PAUSE=1]"
 }
