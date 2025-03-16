@@ -84,6 +84,20 @@ class SlideSpeakGUI:
                                       state="readonly", width=25)
         model_dropdown.pack(side=tk.LEFT, padx=(10, 0))
 
+        # Device type selection
+        device_frame = ttk.Frame(options_frame)
+        device_frame.pack(fill=tk.X, pady=5)
+
+        ttk.Label(device_frame, text="Device Type:").pack(side=tk.LEFT)
+
+        self.device_var = tk.StringVar(value="CPU")
+        cpu_radio = ttk.Radiobutton(
+            device_frame, text="CPU", variable=self.device_var, value="CPU")
+        cpu_radio.pack(side=tk.LEFT, padx=(10, 0))
+        npu_radio = ttk.Radiobutton(
+            device_frame, text="NPU", variable=self.device_var, value="NPU")
+        npu_radio.pack(side=tk.LEFT)
+
         # Save location
         save_frame = ttk.Frame(options_frame)
         save_frame.pack(fill=tk.X, pady=5)
@@ -296,8 +310,11 @@ class SlideSpeakGUI:
                 # Generate new presentation content
                 try:
                     self.log(
-                        "No cached version found. Generating content with Ollama...")
-                    result = pdf2final_list.process(main_topic)
+                        "No cached version found. Generating content with Ollama/AnythingLLM...")
+                    device_type = self.device_var.get()  # Get selected device type
+                    # Pass device_type to process
+                    result = pdf2final_list.process(
+                        main_topic, device_type=device_type)
 
                     enriched_outline = result["enriched_outline"]
                     speech_text = result["speech_text"]

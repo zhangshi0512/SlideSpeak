@@ -9,7 +9,7 @@ import os
 os.makedirs("./output", exist_ok=True)
 
 # 1) Generate the transcript, as you already do:
-result = pdf2final_list.process("claude vs gpt")
+result = pdf2final_list.process("On Device AI Qualcomm Technology")
 
 enriched_outline = result["enriched_outline"]
 speech_text = result["speech_text"]
@@ -19,7 +19,7 @@ speech_text_path = "./output/presentation_speech.md"
 
 with open(outline_path, "w", encoding="utf-8") as file:
     json.dump(enriched_outline, file, ensure_ascii=False, indent=4)
-
+    
 with open(speech_text_path, "w", encoding="utf-8") as file:
     file.write(speech_text)
 

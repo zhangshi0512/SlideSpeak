@@ -26,7 +26,7 @@ def generate_speech_introduction_prompt() -> str:
     4. Uses simple language suitable for text-to-speech systems
     5. Includes [PAUSE=1] markers for 1-second pauses at natural breaking points
     
-    The introduction should be concise (3-5 sentences) and engaging.
+    The introduction should be concise (1-2 sentences) and engaging.
     """
 
 
@@ -61,7 +61,7 @@ def generate_speech_conclusion_prompt() -> str:
     4. Uses simple language suitable for text-to-speech systems
     5. Includes [PAUSE=1] markers at natural breaking points
     
-    The conclusion should be concise (3-5 sentences) and provide closure to the presentation.
+    The conclusion should be concise (2-3 sentences) and provide closure to the presentation.
     """
 
 
@@ -119,7 +119,7 @@ def outline_to_speech_chunked(enriched_outline: Dict[str, Any]) -> str:
         Key Points:
         - {" ".join(simplified_content[:5])}
         
-        Convert this into a section of a speech with natural language. Use about 3-5 sentences. Do not start with Let's discuss, In natural language, it is indicated that there should be a beginning that carries over to the next.
+        Convert this into a section of a speech with natural language. Use about 1-3 sentences. Do not start with Let's discuss, In natural language, it is indicated that there should be a beginning that carries over to the next.
         """
         
         # Generate the section text
@@ -225,7 +225,7 @@ def process_text_content_chunked(content_text: str, topic: str = "") -> str:
         Content preview:
         {content_preview}
         
-        Convert this into a natural-sounding speech section of about 3-5 sentences.
+        Convert this into a natural-sounding speech section of about 2-3 sentences.
         """
         
         section_text = gpt_summarise(
@@ -483,5 +483,5 @@ if __name__ == "__main__":
     
     # Generate speech from the demo outline
     speech = outline_to_speech(demo_outline)
-    save_speech_to_file(speech, "demo_speech.md")
-    print("Demo speech generated and saved to demo_speech.md")
+    save_speech_to_file(speech, "./output/demo_speech.md")
+    print("Demo speech generated and saved to ./output/demo_speech.md")
