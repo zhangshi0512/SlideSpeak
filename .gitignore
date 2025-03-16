@@ -3,4 +3,4 @@ __pycache__/
 *.wav
 *.md
 kokoro-v1.0.onnx
-cache/
+voices-v1.0.bin
