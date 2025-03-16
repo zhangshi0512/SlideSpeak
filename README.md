@@ -166,52 +166,19 @@ SlideSpeak can be run in two modes:
 
 - **Model Selection**: Modify Ollama models (`qwen2.5:7b`) in `gpt.py` if needed.
 
-- **NPU Option**: Users can also run this application on NPU via AnythingLLM. To do this, replace `gpt.py` with the following code:
-
-```python
-import requests, json
-
-
-def gpt_summarise(system, text):
-    print("API calls")
-
-    api_key = "Your api key generated from AnythingLLM Settings under Developer API"
-    base_url = "http://localhost:3001/api/v1"
-    workspace_slug = "the name of your workspace, all lower case"
-
-    chat_url = f"{base_url}/workspace/{workspace_slug}/chat"
-
-    url = chat_url
-
-    headers = {
-        "accept": "application/json",
-        "Content-Type": "application/json",
-        "Authorization": "Bearer " + api_key
-    }
-
-    data ={
-        "message": system + text,
-        "mode": "chat",
-        "sessionId": "ppt_generate",
-        "attachments": []
-    }
-    print("start to try!")
-
-    try:
-        response = requests.post(url, headers=headers, json=data)
-        response.raise_for_status()
-
-        print(response.json()['textResponse'])
-        return response.json()['textResponse']
-
-    except requests.exceptions.RequestException as e:
-        print(f"Error communicating with Ollama API: {e}")
-        return "Error: Could not get summary from Ollama"
-
-```
+- **NPU Option**: Users can also run this application on NPU via AnythingLLM. To do this, please following these steps:
+    1. Under AnythingLLM Settings, find LLM, select `Qualcomm QNN` as LLM Provider.
+    2. Download LLM that supports NPU.
+    ![NPU_Setting1](/screenshots/AnythingLLM_Setting_1.jpg)
+    3. Then move onto Developer API, replace the api key in `gpt.py`.
+    ![NPU_Setting2](/screenshots/AnythingLLM_Setting_2.jpg)
+    4. Find your workspace, or create one, replace it also in `gpt.py`, please note it should be all lower-cases.
+    5. Lastly, select NPU Option in `Device Type` under `Generation Options` when the User Interface is initialized.
+    ![user_interface](/screenshots/main_gui.jpg)
 
 - **Error Handling**: Basic error handling is implemented; further improvements are possible.
-- **Image Generation**: Current version uses Ollama for image prompts. Image prompt functionality is integrated but needs further development for full PPTX image insertion.
+![error](/screenshots/error_log.jpg)
+- **Image Generation**: Current version uses Ollama for image prompts. But the image functionality is not fully implemented and needs further development for full PPTX image insertion.
 
 ## License
 
