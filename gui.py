@@ -32,7 +32,7 @@ class PresentSmartGUI:
         main_frame.pack(fill=tk.BOTH, expand=True)
         
         # Header
-        header_label = ttk.Label(main_frame, text="PresentSmart - AI PowerPoint Generator", style='Header.TLabel')
+        header_label = ttk.Label(main_frame, text="SlideSpeak - AI PowerPoint Generator", style='Header.TLabel')
         header_label.pack(pady=(0, 20))
         
         # Cache status label
@@ -67,9 +67,9 @@ class PresentSmartGUI:
         
         ttk.Label(model_frame, text="Content Generation Model:").pack(side=tk.LEFT)
         
-        self.model_var = tk.StringVar(value="qwen2.5:3b")
+        self.model_var = tk.StringVar(value="llama3.2:3b")
         model_dropdown = ttk.Combobox(model_frame, textvariable=self.model_var, 
-                                      values=["qwen2.5:3b", "erwan2/DeepSeek-Janus-Pro-7B"], 
+                                      values=["qwen2.5:3b", "qwen2.5:7b", "gemma3:4b", "llama3.2:1b", "llama3.2:3b"], 
                                       state="readonly", width=25)
         model_dropdown.pack(side=tk.LEFT, padx=(10, 0))
         
