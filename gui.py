@@ -272,8 +272,12 @@ class PresentSmartGUI:
             else:
                 # Generate new presentation content
                 try:
-                    self.log("No cached version found. Generating content with Ollama...")
-                    result = pdf2final_list.process(main_topic)
+                    # Get the selected model from the dropdown
+                    selected_model = self.model_var.get()
+                    self.log(f"No cached version found. Generating content with Ollama using model: {selected_model}...")
+                    
+                    # Pass the selected model to the process function
+                    result = pdf2final_list.process(main_topic, model=selected_model)
                     
                     enriched_outline = result["enriched_outline"]
                     speech_text = result["speech_text"]

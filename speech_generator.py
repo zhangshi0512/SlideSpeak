@@ -6,6 +6,7 @@ for text-to-speech (TTS) systems.
 
 import json
 import re
+import os
 from typing import Dict, List, Union, Any
 
 # Import the GPT module for text generation
@@ -65,12 +66,106 @@ def generate_speech_conclusion_prompt() -> str:
     """
 
 
-def outline_to_speech_chunked(enriched_outline: Dict[str, Any]) -> str:
+def create_speech_from_enriched_outline(enriched_outline: dict, model: str = "qwen2.5:7b") -> str:
+    """
+    Create a complete speech script from an enriched outline with pregenerated speech components.
+    This function uses the introduction and per-slide speech text that has already been generated
+    and combines them with proper transitions and formatting.
+    
+    Args:
+        enriched_outline (dict): The enriched outline with introduction and slide speech
+        model (str): Model name to use for any additional text generation
+        
+    Returns:
+        str: Complete speech script for TTS
+    """
+    # Extract introduction
+    introduction = enriched_outline.get('introduction', '')
+    if not introduction:
+        # Generate introduction if not present
+        title = enriched_outline.get('title', 'Presentation')
+        slide_titles = [slide['title'] for slide in enriched_outline.get('slides', [])]
+        intro_prompt = f"""
+        Title: {title}
+        Main sections: {', '.join(slide_titles)}
+        
+        Create an introduction for this presentation.
+        """
+        introduction = gpt_summarise(
+            system=generate_speech_introduction_prompt(),
+            text=intro_prompt,
+            model=model
+        )
+    
+    # Combine slide speeches with transitions
+    speech_sections = []
+    slides = enriched_outline.get('slides', [])
+    
+    for i, slide in enumerate(slides):
+        # Get pregenerated speech for this slide or generate it if not present
+        slide_speech = slide.get('speech', '')
+        if not slide_speech:
+            # Create a simplified version of the slide content
+            simplified_content = []
+            for item in slide.get('content', []):
+                if isinstance(item, dict) and 'bulletPoint' in item:
+                    bullet = item.get('bulletPoint', '')
+                    details = ' '.join(item.get('details', [])[:2])
+                    simplified_content.append(f"{bullet} - {details[:200]}")
+                else:
+                    simplified_content.append(str(item)[:200])
+            
+            # Generate speech for this slide
+            slide_prompt = f"""
+            Slide Title: {slide.get('title', 'Slide')}
+            
+            Key Points:
+            - {' '.join(simplified_content[:5])}
+            
+            Convert this into a natural speech section.
+            """
+            slide_speech = gpt_summarise(
+                system=generate_speech_section_prompt(),
+                text=slide_prompt,
+                model=model
+            )
+        
+        # Add transition except for the last slide
+        if i < len(slides) - 1:
+            next_slide = slides[i+1].get('title', 'Next Topic')
+            slide_speech += f" [PAUSE=1] Moving on to our next topic: {next_slide}. [SLIDE CHANGE]"
+        
+        speech_sections.append(slide_speech)
+    
+    # Generate conclusion
+    title = enriched_outline.get('title', 'Presentation')
+    slide_titles = [slide.get('title', f"Slide {i+1}") for i, slide in enumerate(slides)]
+    conclusion_prompt = f"""
+    Title: {title}
+    Main sections covered: {', '.join(slide_titles)}
+    
+    Create a brief conclusion.
+    """
+    
+    conclusion = gpt_summarise(
+        system=generate_speech_conclusion_prompt(),
+        text=conclusion_prompt,
+        model=model
+    )
+    
+    # Combine all parts
+    full_speech = introduction + "\n\n" + "\n\n".join(speech_sections) + "\n\n" + conclusion
+    
+    return full_speech
+
+
+def outline_to_speech_chunked(enriched_outline: Dict[str, Any], model: str = "qwen2.5:7b") -> str:
     """
     Generate speech by processing the outline in chunks with state management.
     
     Args:
         enriched_outline (dict): The enriched presentation outline
+        model (str): Model name to use for text generation
         
     Returns:
         str: A formatted speech script optimized for TTS systems
@@ -89,7 +184,8 @@ def outline_to_speech_chunked(enriched_outline: Dict[str, Any]) -> str:
     
     introduction = gpt_summarise(
         system=generate_speech_introduction_prompt(),
-        text=intro_prompt
+        text=intro_prompt,
+        model=model
     )
     
     # Step 2: Process each slide individually
@@ -125,7 +221,8 @@ def outline_to_speech_chunked(enriched_outline: Dict[str, Any]) -> str:
         # Generate the section text
         section_text = gpt_summarise(
             system=generate_speech_section_prompt(),
-            text=slide_prompt
+            text=slide_prompt,
+            model=model
         )
         
         # Add transition except for the last slide
@@ -145,7 +242,8 @@ def outline_to_speech_chunked(enriched_outline: Dict[str, Any]) -> str:
     
     conclusion = gpt_summarise(
         system=generate_speech_conclusion_prompt(),
-        text=conclusion_prompt
+        text=conclusion_prompt,
+        model=model
     )
     
     # Combine all parts
@@ -154,13 +252,14 @@ def outline_to_speech_chunked(enriched_outline: Dict[str, Any]) -> str:
     return full_speech
 
 
-def process_text_content_chunked(content_text: str, topic: str = "") -> str:
+def process_text_content_chunked(content_text: str, topic: str = "", model: str = "qwen2.5:7b") -> str:
     """
     Process text content by identifying sections and processing them sequentially.
     
     Args:
         content_text (str): The presentation content text
         topic (str): Optional topic to provide context
+        model (str): Model name to use for text generation
         
     Returns:
         str: A formatted speech script optimized for TTS systems
@@ -210,7 +309,8 @@ def process_text_content_chunked(content_text: str, topic: str = "") -> str:
     
     introduction = gpt_summarise(
         system=generate_speech_introduction_prompt(),
-        text=intro_prompt
+        text=intro_prompt,
+        model=model
     )
     
     # Step 2: Process each section
@@ -230,7 +330,8 @@ def process_text_content_chunked(content_text: str, topic: str = "") -> str:
         
         section_text = gpt_summarise(
             system=generate_speech_section_prompt(),
-            text=section_prompt
+            text=section_prompt,
+            model=model
         )
         
         # Add transition except for the last section
@@ -250,7 +351,8 @@ def process_text_content_chunked(content_text: str, topic: str = "") -> str:
     
     conclusion = gpt_summarise(
         system=generate_speech_conclusion_prompt(),
-        text=conclusion_prompt
+        text=conclusion_prompt,
+        model=model
     )
     
     # Combine all parts
@@ -259,13 +361,14 @@ def process_text_content_chunked(content_text: str, topic: str = "") -> str:
     return full_speech
 
 
-def outline_to_speech(content: Union[Dict[str, Any], str], use_chunking: bool = True) -> str:
+def outline_to_speech(content: Union[Dict[str, Any], str], use_chunking: bool = True, model: str = "qwen2.5:7b") -> str:
     """
     Convert presentation content to a TTS-ready speech script.
     
     Args:
         content: Can be either a JSON outline or a presentation text
         use_chunking: Whether to use chunked processing (for smaller LLMs) or direct processing (for larger LLMs)
+        model: Model name to use for text generation
         
     Returns:
         str: A formatted speech script optimized for TTS systems
@@ -305,7 +408,7 @@ def outline_to_speech(content: Union[Dict[str, Any], str], use_chunking: bool = 
         The final output should read as a continuous speech that a TTS system could read without awkward phrasing or unclear structure.
         """
         
-        speech_text = gpt_summarise(system=direct_prompt, text=content_str)
+        speech_text = gpt_summarise(system=direct_prompt, text=content_str, model=model)
         return speech_text
     
     # For chunked processing with smaller LLMs
@@ -313,100 +416,11 @@ def outline_to_speech(content: Union[Dict[str, Any], str], use_chunking: bool = 
         # Determine the type of content and use appropriate processing
         if isinstance(content, dict):
             # Process JSON outline using chunked method
-            return outline_to_speech_chunked(content)
+            return outline_to_speech_chunked(content, model)
         else:
             # Process text content using text chunking method
             content_str = str(content)
-            return process_text_content_chunked(content_str)
-
-
-def create_speech_from_enriched_outline(enriched_outline: dict) -> str:
-    """
-    Create a complete speech script from an enriched outline with pregenerated speech components.
-    This function uses the introduction and per-slide speech text that has already been generated
-    and combines them with proper transitions and formatting.
-    
-    Args:
-        enriched_outline (dict): The enriched outline with introduction and slide speech
-        
-    Returns:
-        str: Complete speech script for TTS
-    """
-    # Extract introduction
-    introduction = enriched_outline.get('introduction', '')
-    if not introduction:
-        # Generate introduction if not present
-        title = enriched_outline.get('title', 'Presentation')
-        slide_titles = [slide['title'] for slide in enriched_outline.get('slides', [])]
-        intro_prompt = f"""
-        Title: {title}
-        Main sections: {', '.join(slide_titles)}
-        
-        Create an introduction for this presentation.
-        """
-        introduction = gpt_summarise(
-            system=generate_speech_introduction_prompt(),
-            text=intro_prompt
-        )
-    
-    # Combine slide speeches with transitions
-    speech_sections = []
-    slides = enriched_outline.get('slides', [])
-    
-    for i, slide in enumerate(slides):
-        # Get pregenerated speech for this slide or generate it if not present
-        slide_speech = slide.get('speech', '')
-        if not slide_speech:
-            # Create a simplified version of the slide content
-            simplified_content = []
-            for item in slide.get('content', []):
-                if isinstance(item, dict) and 'bulletPoint' in item:
-                    bullet = item.get('bulletPoint', '')
-                    details = ' '.join(item.get('details', [])[:2])
-                    simplified_content.append(f"{bullet} - {details[:200]}")
-                else:
-                    simplified_content.append(str(item)[:200])
-            
-            # Generate speech for this slide
-            slide_prompt = f"""
-            Slide Title: {slide.get('title', 'Slide')}
-            
-            Key Points:
-            - {' '.join(simplified_content[:5])}
-            
-            Convert this into a natural speech section.
-            """
-            slide_speech = gpt_summarise(
-                system=generate_speech_section_prompt(),
-                text=slide_prompt
-            )
-        
-        # Add transition except for the last slide
-        if i < len(slides) - 1:
-            next_slide = slides[i+1].get('title', 'Next Topic')
-            slide_speech += f" [PAUSE=1] Moving on to our next topic: {next_slide}. [SLIDE CHANGE]"
-        
-        speech_sections.append(slide_speech)
-    
-    # Generate conclusion
-    title = enriched_outline.get('title', 'Presentation')
-    slide_titles = [slide.get('title', f"Slide {i+1}") for i, slide in enumerate(slides)]
-    conclusion_prompt = f"""
-    Title: {title}
-    Main sections covered: {', '.join(slide_titles)}
-    
-    Create a brief conclusion.
-    """
-    
-    conclusion = gpt_summarise(
-        system=generate_speech_conclusion_prompt(),
-        text=conclusion_prompt
-    )
-    
-    # Combine all parts
-    full_speech = introduction + "\n\n" + "\n\n".join(speech_sections) + "\n\n" + conclusion
-    
-    return full_speech
+            return process_text_content_chunked(content_str, model=model)
 
 
 def save_speech_to_file(speech_text: str, filename: str = "./output/presentation_speech.md") -> None:
@@ -425,7 +439,7 @@ def save_speech_to_file(speech_text: str, filename: str = "./output/presentation
     print(f"TTS-ready speech script saved to {filename}")
 
 
-def process_existing_content(content_text: str, topic: str = "", use_chunking: bool = True) -> str:
+def process_existing_content(content_text: str, topic: str = "", use_chunking: bool = True, model: str = "qwen2.5:7b") -> str:
     """
     Process existing presentation content and generate a TTS-ready speech script.
     
@@ -433,6 +447,7 @@ def process_existing_content(content_text: str, topic: str = "", use_chunking: b
         content_text (str): The presentation content text
         topic (str): Optional topic to provide context
         use_chunking (bool): Whether to use chunked processing (for smaller LLMs) or direct processing (for larger LLMs)
+        model (str): Model name to use for text generation
         
     Returns:
         str: TTS-ready speech script
@@ -445,11 +460,11 @@ def process_existing_content(content_text: str, topic: str = "", use_chunking: b
     
     # Process with selected method
     if use_chunking:
-        speech_text = process_text_content_chunked(content_with_context)
+        speech_text = process_text_content_chunked(content_with_context, model=model)
         print("TTS-ready speech script generated from existing content using chunked processing.")
     else:
         # Use direct method for larger LLMs
-        speech_text = outline_to_speech(content_with_context, use_chunking=False)
+        speech_text = outline_to_speech(content_with_context, use_chunking=False, model=model)
         print("TTS-ready speech script generated from existing content using direct processing.")
     
     # Save speech script to file
@@ -457,9 +472,6 @@ def process_existing_content(content_text: str, topic: str = "", use_chunking: b
     
     return speech_text
 
-
-# Add import for os module needed for save_speech_to_file function
-import os
 
 if __name__ == "__main__":
     # Simple example usage

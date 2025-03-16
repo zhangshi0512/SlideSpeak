@@ -81,7 +81,7 @@ def textEnrichmentPrompt() -> str:
     """
 
 # Updated version of per slide enrichment from test.py
-def perSlideEnrich(topic: str, outline: str) -> dict:
+def perSlideEnrich(topic: str, outline: str, model: str = "qwen2.5:7b") -> dict:
     try:
         outline = json.loads(outline)
     except json.JSONDecodeError:
@@ -95,7 +95,8 @@ def perSlideEnrich(topic: str, outline: str) -> dict:
         try:
             enrichedSlide = gpt.gpt_summarise(
                 system=textEnrichmentPrompt(), 
-                text=f"topic: {topic}\n\n" + json.dumps(slide)
+                text=f"topic: {topic}\n\n" + json.dumps(slide),
+                model=model
             ).replace("```json", "").replace("```", "")
             
             try: 
@@ -122,7 +123,7 @@ def perSlideEnrich(topic: str, outline: str) -> dict:
     return outline
 
 # Generate introduction speech for the presentation
-def generateIntroSpeech(enriched_outline):
+def generateIntroSpeech(enriched_outline, model="qwen2.5:7b"):
     title = enriched_outline['title']
     slide_titles = [slide['title'] for slide in enriched_outline['slides']]
     intro_prompt = f"""
@@ -134,13 +135,14 @@ def generateIntroSpeech(enriched_outline):
     
     introduction = gpt.gpt_summarise(
         system=speech_generator.generate_speech_introduction_prompt(),
-        text=intro_prompt
+        text=intro_prompt,
+        model=model
     )
     enriched_outline['introduction'] = introduction
     return enriched_outline
 
 # Generate speech for each slide
-def generateSlideSpeech(enriched_outline):
+def generateSlideSpeech(enriched_outline, model="qwen2.5:7b"):
     for i, slide in enumerate(enriched_outline['slides']):
         simplified_content = []
         for item in slide['content']:
@@ -160,31 +162,32 @@ def generateSlideSpeech(enriched_outline):
         """
         section_text = gpt.gpt_summarise(
             system=speech_generator.generate_speech_section_prompt(),
-            text=slide_prompt
+            text=slide_prompt,
+            model=model
         )
         enriched_outline['slides'][i]['speech'] = section_text
     
     return enriched_outline
 
-def process(topic: str, use_chunking=True):
+def process(topic: str, model: str = "qwen2.5:7b", use_chunking=True):
     # Generate initial outline
-    outlineText = gpt.gpt_summarise(system=initialOutlinePrompt(), text=topic)
-    print("Initial outline generated.")
+    outlineText = gpt.gpt_summarise(system=initialOutlinePrompt(), text=topic, model=model)
+    print(f"Initial outline generated using model: {model}")
     
     # Enrich content slide by slide
-    enrichedOutline = perSlideEnrich(topic, outlineText)
+    enrichedOutline = perSlideEnrich(topic, outlineText, model)
     print("Outline enriched slide by slide.")
     
     # Add speech introduction to the enriched outline
-    enrichedOutline = generateIntroSpeech(enrichedOutline)
+    enrichedOutline = generateIntroSpeech(enrichedOutline, model)
     print("Introduction speech generated.")
     
     # Add speech for each slide
-    enrichedOutline = generateSlideSpeech(enrichedOutline)
+    enrichedOutline = generateSlideSpeech(enrichedOutline, model)
     print("Slide speech generated.")
     
     # Convert enriched outline to TTS-ready speech script
-    speech_text = speech_generator.create_speech_from_enriched_outline(enrichedOutline)
+    speech_text = speech_generator.create_speech_from_enriched_outline(enrichedOutline, model)
     print("TTS-ready speech script generated.")
     
     # Save speech script to file

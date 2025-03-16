@@ -1,11 +1,20 @@
 import requests, json
 
-
-
-def gpt_summarise(system, text):
+def gpt_summarise(system, text, model="qwen2.5:7b"):
+    """
+    Process text using the Ollama API.
+    
+    Args:
+        system (str): System message or instructions
+        text (str): User text to process
+        model (str): Model name to use (defaults to "qwen2.5:7b")
+        
+    Returns:
+        str: Response content from the model
+    """
     url = "http://localhost:11434/api/chat"
     payload = {
-        "model": "qwen2.5:7b",
+        "model": model,
         "messages": [
             {"role": "system", "content": system},
             {"role": "user", "content": text}
@@ -31,5 +40,4 @@ def gpt_summarise(system, text):
     
     except requests.exceptions.RequestException as e:
         print(f"Error communicating with Ollama API: {e}")
-        return "Error: Could not get summary from Ollama"
-    
+        return f"Error: Could not get summary from Ollama using model {model}: {str(e)}"
