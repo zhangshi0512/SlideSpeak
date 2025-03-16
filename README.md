@@ -1,10 +1,12 @@
-# PresentSmart - PDF to PPT Generator
+# SlideSpeak - Text to PPT & Speech Generator
 
-This project is a Python-based tool that automatically generates PowerPoint presentations from a list of topics. It leverages local Large Language Models (LLMs) served by Ollama to generate summaries and code snippets for each topic and incorporates these into a PPTX presentation.
+This project is a Python-based AI tool that does two things: Converting text query into Powerpoint and speech transcript, and converting speech transcript into audio files per slide for rehearsal.
+
+It leverages local Large Language Models (LLMs) served by Ollama to generate outline and content for each presentation slide, and incorporates Local Text to Speech (TTS) model to convert the generated speech transcript into audio files.
 
 ## Prerequisites
 
-Before running PresentSmart, ensure you have the following installed and set up:
+Before running SlideSpeak, ensure you have the following installed and set up:
 
 1.  **Ollama**:
 
@@ -24,11 +26,10 @@ Before running PresentSmart, ensure you have the following installed and set up:
       ```
 
 4.  **Ollama Models**:
-    - PresentSmart uses the `qwen2.5:7b` and `erwan2/DeepSeek-Janus-Pro-7B` Ollama models. You need to pull these models from Ollama.
+    - SlideSpeak uses the `qwen2.5:7b` Ollama models. You need to pull these models from Ollama.
     - Run the following commands in your terminal:
       ```bash
       ollama pull qwen2.5:7b
-      ollama pull erwan2/DeepSeek-Janus-Pro-7B
       ```
 
 ## Installation
@@ -37,20 +38,19 @@ Before running PresentSmart, ensure you have the following installed and set up:
 
     ```bash
     git clone [repository_url]
-    cd PresentSmart
+    cd SlideSpeak
     ```
 
 2.  **Install Python packages**:
 
     ```bash
-    pip install python-pptx requests
+    pip install python-pptx requests pywin32 kokoro soundfile numpy
     ```
 
 3.  **Pull Ollama models**:
 
     ```bash
     ollama pull qwen2.5:7b
-    ollama pull erwan2/DeepSeek-Janus-Pro-7B
     ```
 
 4.  **Kokoro TTS Models**:
@@ -59,7 +59,7 @@ Before running PresentSmart, ensure you have the following installed and set up:
 
 ## Running the Application
 
-You can run PresentSmart in two ways:
+You can run SlideSpeak in two ways:
 
 1.  **Using the Graphical User Interface (GUI)**:
 
@@ -67,7 +67,12 @@ You can run PresentSmart in two ways:
       ```bash
       python gui.py
       ```
-    - Enter comma-separated topics in the GUI and press Enter to generate the PPTX presentation.
+    - Enter comma-separated topics in the GUI and press Enter to generate the PPTX presentation and speech transcript.
+    - After the presentation is generated, you can find it in the project directory as `PPT.pptx`.
+    - The presentation outline and speech transcript are saved in the output directory.
+    - Then the interface of speech to audio conversion would popup provides user two choices:
+      - **text2audio_kokoro (Best Result)**: This option converts the generated speech transcript into a series of audio files (based on the number of slides) using the Kokoro TTS model.
+      - **text2audio_pyttsx3 (Fastest Result)**: This option converts the generated speech transcript into a series of audio files (based on the number of slides) using the pyttsx3 library.
 
 2.  **Using the Command Line Interface (CLI)**:
     - Run the `main.py` script to generate a PPTX presentation with a predefined list of topics:
@@ -78,8 +83,8 @@ You can run PresentSmart in two ways:
 
 ## Notes
 
-- **Model Selection**: The Ollama models used in `gpt.py` (`qwen2.5:7b`) and `addphoto.py` (`erwan2/DeepSeek-Janus-Pro-7B`) can be modified in these files if you wish to use different models.
+- **Model Selection**: The Ollama models used in `gpt.py` (`qwen2.5:7b`) can be modified in these files if you wish to use different models.
 - **Error Handling**: Basic error handling is implemented, but further improvements can be added for more robust performance.
 - **Image Generation**: The current version uses Ollama to generate image prompts instead of downloading images directly. The image prompt functionality is integrated but may require further development to fully utilize generated prompts for image insertion into the PPTX.
 
-Enjoy using PresentSmart to quickly create PowerPoint presentations!
+Enjoy using SlideSpeak to quickly create PowerPoint presentations!
