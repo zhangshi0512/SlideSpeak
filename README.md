@@ -38,7 +38,7 @@ It utilizes local Large Language Models (LLMs) served by Ollama to generate pres
 
 ![application_interface](/screenshots/live_demo_npu-ezgif.com-speed.gif)
 
-**Text2Audio Live Demo Using CPU**S
+**Text2Audio Live Demo Using CPU**
 
 ![TTS_interface](/screenshots/live_demo_tts.gif)
 
