@@ -127,17 +127,34 @@ def addContentSlide(prs: Presentation, slideDict: dict, speaker_notes=""):
         notes_slide = currentSlide.notes_slide
         notes_textframe = notes_slide.notes_text_frame
         
+        notes_content = []
+        
         # Clean up the notes by removing special markers for TTS
         if speaker_notes:
             clean_notes = re.sub(r'\[PAUSE=\d+\]', '', speaker_notes)
             clean_notes = re.sub(r'\[SLIDE CHANGE\]', '', clean_notes)
-            notes_textframe.text = clean_notes.strip()
+            notes_content.append(clean_notes.strip())
         
         # If slide has speech directly from test.py format
         elif slideDict.get("speech"):
             clean_notes = re.sub(r'\[PAUSE=\d+\]', '', slideDict["speech"])
             clean_notes = re.sub(r'\[SLIDE CHANGE\]', '', clean_notes)
-            notes_textframe.text = clean_notes.strip()
+            notes_content.append(clean_notes.strip())
+        
+        # Now add the details from content
+        details_text = []
+        for content in slideDict["content"]:
+            if content.get("details") and isinstance(content["details"], list) and content["details"]:
+                bullet_point = content.get("bulletPoint", "").strip()
+                details_text.append(f"\n\nDETAILS FOR: {bullet_point}")
+                for detail in content["details"]:
+                    details_text.append(f"- {detail.strip()}")
+        
+        if details_text:
+            notes_content.append("\n".join(details_text))
+        
+        # Set the combined notes
+        notes_textframe.text = "\n\n".join(notes_content)
     
     # Then add content, potentially creating additional slides if needed
     for content in slideDict["content"]:
@@ -163,13 +180,27 @@ def addContentSlide(prs: Presentation, slideDict: dict, speaker_notes=""):
             contentTextFrame = currentSlide.placeholders[1].text_frame
             wordCount = 0
             
-            # No speaker notes for additional slides with the same title
+            # Add details to speaker notes for additional slides too
+            if hasattr(currentSlide, 'notes_slide'):
+                notes_slide = currentSlide.notes_slide
+                notes_textframe = notes_slide.notes_text_frame
+                details_text = []
+                
+                # Only add details for content that will appear on this slide
+                # (This is a simple approach; you might need to track which content items go on which slide)
+                details_text.append(f"\nDETAILS FOR: {bulletPoint}")
+                if content.get("details") and isinstance(content["details"], list):
+                    for detail in content["details"]:
+                        details_text.append(f"- {detail.strip()}")
+                
+                if details_text:
+                    notes_textframe.text = "\n".join(details_text)
         
         p = contentTextFrame.add_paragraph()
         p.text = bulletPoint
         p.level = 0
         p.font.size = Pt(22)
-
+        
         for point in subPoints:
             p = contentTextFrame.add_paragraph()
             point_text = point.strip()
@@ -178,7 +209,7 @@ def addContentSlide(prs: Presentation, slideDict: dict, speaker_notes=""):
             p.text = point_text
             p.level = 1
             p.font.size = Pt(18)
-
+        
         wordCount += newContentWordCount
 
 
