@@ -1,17 +1,17 @@
 # SlideSpeak - Text to PPT &amp; Speech Generator
 
 [![License](https://img.shields.io/badge/License-Apache%202.0-blue.svg)](https://opensource.org/licenses/Apache-2.0)
-
 [![Python](https://img.shields.io/badge/Python-3.10+-blue?logo=python&logoColor=white)](https://www.python.org)
 [![Ollama](https://img.shields.io/badge/Ollama-blue?logo=ollama&logoColor=white)](https://ollama.com/)
 [![PyTorch](https://img.shields.io/badge/PyTorch-blue?logo=pytorch&logoColor=white)](https://pytorch.org/)
 
-**2025 Qualcomm Technologies x Northeastern University Hackathon**
-**March 15th - 16th**
+**Qualcomm Technologies x Northeastern University Hackathon**
 
-**Team:** NewTeamOne
+2025 March 15th - 16th
 
-**Team members:** Yuchen Jiang, Yuchen Li, Quancheng Li, Shi Zhang, Jiangtian Han
+Team: NewTeamOne
+
+Team members: Yuchen Jiang, Yuchen Li, Quancheng Li, Shi Zhang, Jiangtian Han
 
 ## Table of Contents
 
@@ -34,7 +34,13 @@ SlideSpeak is a Python-based AI tool designed for:
 
 It utilizes local Large Language Models (LLMs) served by Ollama to generate presentation outlines and slide content. Additionally, it integrates a local Text to Speech (TTS) model to convert speech transcripts into audio files.
 
-![application_interface](/screenshots/main_gui.jpg)
+**Text2PPT Live Demo Using NPU**
+
+![application_interface](/screenshots/live_demo_npu-ezgif.com-speed.gif)
+
+**Text2Audio Live Demo Using CPU**S
+
+![TTS_interface](/screenshots/live_demo_tts.gif)
 
 ## Architecture
 
